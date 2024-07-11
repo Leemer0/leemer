@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translucent Plastic Cube Portfolio</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            height: 100vh;
+            background: linear-gradient(to bottom, #3A506B, #1C2541);
+        }
+        .back-button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: #DCF763;
+            cursor: pointer;
+            display: none;
+        }
+        .resume-text, .about-text, .projects-text, .contact-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px; /* Increased font size */
+            color: white;
+            text-align: left; /* Left-aligned text */
+            white-space: pre-line;
+            display: none;
+            max-width: 70%;
+            line-height: 1.5;
+        }
+        .contact-text img {
+            display: block;
+            margin: 0 auto;
+        }
+        .contact-text p {
+            text-align: center;
+            margin-top: 20px;
+        }
+        h2 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-left: 10px;
+            margin-bottom: 20px; /* Added spacing between paragraphs */
+        }
+        .role-date {
+            margin-bottom: 5px; /* Spacing between role and date */
+        }
+        .title-location {
+            margin-bottom: 5px; /* Spacing between title and location */
+        }
+        .italic {
+            font-style: italic;
+        }
+        .menu-option {
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body>
+    <div class="back-button" id="backButton">Back to Main Menu</div>
+    <div class="resume-text" id="resumeText">
+        <h2>EXPERIENCE</h2>
+        
+        <p class="title-location">Reel One Entertainment, Vancouver, BC</p>
+        <p class="role-date">Business Affairs Coordinator, Film Development | August 2022 - June 2023</p>
+        <p>Six months after joining this company, I moved into the development department where I managed contracts and learned more about the business of media. Here I interacted with agents, producers, and writers in LA and London, negotiating contracts and working under tight deadlines.</p>
+        
+        <p class="title-location">Reel One Entertainment, Vancouver, BC</p>
+        <p class="role-date">Business Affairs Assistant | February - August 2022</p>
+        <p>I moved to Vancouver to get out of Toronto and joined a small company, working in an administrative function. The change of scenery was refreshing and the new role allowed me to grow and adapt to a new environment.</p>
+
+        <p class="title-location">Canada Guaranty Mortgage Insurance, Toronto, ON</p>
+        <p class="role-date">Operations Support Analyst | March - November 2021</p>
+        <p>My first job out of university and during the pandemic, I developed leadership and operational skills. I led a new team of operations support and managed their daily workloads. This role gave me experience working with financial professionals and in the mortgage industry.</p>
+        
+        <p class="title-location">Lake of Bays Sailing Club, Muskoka, ON</p>
+        <p class="role-date">Sailing Coach | 2016 - 2019</p>
+        <p>A very rewarding experience, mentoring and teaching while working on the water and in nature. This role was fulfilling and allowed me to share my passion for sailing with others.</p>
+    </div>
+    <div class="about-text" id="aboutText">
+        <h2>Liam Elia</h2>
+        
+        <p>I'm passionate about product management, strategy, and the intersection of hardware and software. I'm always eager to learn and work on projects that provide real value beyond just monetary gain.</p>
+        
+        <p>Having recently returned from a travel break, I'm now looking to join a company that aligns with my values and where I can truly make an impact. My journey took me through various places:</p>
+        
+        <p>Vancouver -> Hanoi -> Ha Giang -> Sa Pa -> Cat Ba -> Ninh Binh -> Phong Na -> Hue -> Hoi An -> Da Nang -> Ho Chi Minh City -> Phnom Penh -> Krong Kampot -> Koh Ta Kiev -> Sihanoukville -> Ko Rong Sanloem -> Siem Reap -> Bangkok -> Chiang Mai -> Pai -> Koh Phangan -> Koh Samui -> Phuket -> Koh Phi Phi -> Koh Lanta -> Railay Beach -> Khao Sok -> Nagasaki -> Hiroshima -> Okayama -> Osaka -> Kobe -> Nara -> Kyoto -> Hakone -> Tokyo</p>
+    </div>
+    <div class="projects-text" id="projectsText">
+        <h2>PROJECTS</h2>
+        
+        <p class="italic">yourFable.io</p>
+        <p>While traveling, I created a website that leveraged stable diffusion, along with open source workflows like ComfyUI + LORAs on Replicate, and OpenAI API calls to generate custom children’s books. It included connection to print and delivery services and was fully automated. The idea was to use AI to provide a product with a custom story + artwork.</p>
+        
+        <p>Inspired by Indie Hackers and build-in-public on X, I decided to make the first and simplest idea I could. I was a first mover in the space; however, due to learning to code as I was going, more impressive and user-friendly products quickly surpassed my capabilities. It was a great experience, and I developed a foundational understanding of large language and diffusion models, as well as an interest in AI and entrepreneurship.</p>
+    </div>
+    <div class="contact-text" id="contactText">
+        <p>more to come...</p>
+    </div>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const backButton = document.getElementById('backButton');
+        const resumeText = document.getElementById('resumeText');
+        const aboutText = document.getElementById('aboutText');
+        const projectsText = document.getElementById('projectsText');
+        const contactText = document.getElementById('contactText');
+
+        function createRoundedBoxGeometry(width, height, depth, radius, smoothness) {
+            const shape = new THREE.Shape();
+            const eps = 0.00001;
+            const radius0 = radius - eps;
+            shape.absarc(eps, eps, eps, -Math.PI / 2, -Math.PI, true);
+            shape.absarc(eps, height - radius * 2, eps, Math.PI, Math.PI / 2, true);
+            shape.absarc(width - radius * 2, height - radius * 2, eps, Math.PI / 2, 0, true);
+            shape.absarc(width - radius * 2, eps, eps, 0, -Math.PI / 2, true);
+            const geometry = new THREE.ExtrudeGeometry(shape, {
+                depth: depth - radius0 * 2,
+                bevelEnabled: true,
+                bevelSegments: smoothness * 2,
+                steps: 1,
+                bevelSize: radius,
+                bevelThickness: radius0,
+                curveSegments: smoothness
+            });
+            geometry.center();
+            return geometry;
+        }
+
+        const geometry = createRoundedBoxGeometry(1, 1, 1, 0.05, 5);
+
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0 },
+            },
+            vertexShader: `
+                varying vec3 vPosition;
+                varying vec3 vNormal;
+                varying vec3 vViewPosition;
+
+                void main() {
+                    vPosition = position;
+                    vNormal = normal;
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    vViewPosition = -mvPosition.xyz;
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform float time;
+                varying vec3 vPosition;
+                varying vec3 vNormal;
+                varying vec3 vViewPosition;
+
+                vec3 hsl2rgb(vec3 c) {
+                    vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+                    return c.z + c.y * (rgb - 0.5) * (1.0 - abs(2.0 * c.z - 1.0));
+                }
+
+                void main() {
+                    vec3 normal = normalize(vNormal);
+                    vec3 viewDir = normalize(vViewPosition);
+
+                    // Fresnel effect for translucent look
+                    float fresnel = pow(1.0 - dot(normal, viewDir), 3.0);
+
+                    // Vibrant blue color with slight iridescence
+                    vec3 color = mix(vec3(0.04, 0.1, 0.95), vec3(0.15, 0.26, 0.95), fresnel * 0.5);
+
+                    // Apply a blur effect by averaging the color with a fixed value
+                    color = mix(color, vec3(0.8, 0.9, 1.0), 0.5);
+
+                    gl_FragColor = vec4(color, 0.5); // Adjusting the alpha for translucency
+                }
+            `,
+            side: THREE.DoubleSide,
+            transparent: true
+        });
+
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        // Create edges
+        const edgesGeometry = new THREE.EdgesGeometry(geometry);
+        const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x061AF2, linewidth: 3 });
+        const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+        cube.add(edges);
+
+        const createTextTexture = (text, fontSize = '64px', color = '#DCF763') => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+
+            // Add text
+            ctx.fillStyle = color;
+            ctx.font = `bold ${fontSize} Times`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 256, 64);
+
+            return new THREE.CanvasTexture(canvas);
+        };
+
+        const texts = ['About', 'Projects', 'Experience', 'Contact'];
+        const textMaterials = texts.map(text => new THREE.MeshBasicMaterial({ map: createTextTexture(text), transparent: true }));
+
+        const textGeometry = new THREE.PlaneGeometry(0.7, 0.18);
+        const textMeshes = textMaterials.map(material => new THREE.Mesh(textGeometry, material));
+
+        textMeshes[0].position.set(0, 0.35, 0.51);    // About
+        textMeshes[1].position.set(-0.35, 0, 0.51);   // Projects
+        textMeshes[1].rotation.z = Math.PI / 2;
+        textMeshes[2].position.set(0.35, 0, 0.51);    // Experience
+        textMeshes[2].rotation.z = -Math.PI / 2;
+        textMeshes[3].position.set(0, -0.35, 0.51);   // Contact
+
+        textMeshes.forEach(mesh => {
+            mesh.className = 'menu-option'; // Add class to each menu option
+            cube.add(mesh);
+        });
+
+        // Add lighting
+        const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+        scene.add(light);
+
+        // Load background texture
+        const loader = new THREE.CubeTextureLoader();
+        const skyboxUrls = [
+            'https://threejs.org/examples/textures/cube/skyboxsun25deg/px.jpg', // right
+            'https://threejs.org/examples/textures/cube/skyboxsun25deg/nx.jpg', // left
+            'https://threejs.org/examples/textures/cube/skyboxsun25deg/py.jpg', // top
+            'https://threejs.org/examples/textures/cube/skyboxsun25deg/ny.jpg', // bottom
+            'https://threejs.org/examples/textures/cube/skyboxsun25deg/pz.jpg', // back
+            'https://threejs.org/examples/textures/cube/skyboxsun25deg/nz.jpg'  // front
+        ];
+        const skyboxTexture = loader.load(skyboxUrls);
+        
+        // Create a shader material for the skybox with color adjustments
+        const skyboxMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                envMap: { value: skyboxTexture },
+                hue: { value: 0.17 }, // Adjust the hue value (0.0 to 1.0)
+                saturation: { value: 0 }, // Adjust the saturation value (0.0 to 2.0)
+                brightness: { value: 1.0 } // Adjust the brightness value (0.0 to 2.0)
+            },
+            vertexShader: `
+                varying vec3 vWorldPosition;
+                void main() {
+                    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+                    vWorldPosition = worldPosition.xyz;
+                    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform samplerCube envMap;
+                uniform float hue;
+                uniform float saturation;
+                uniform float brightness;
+                varying vec3 vWorldPosition;
+
+                vec3 applyHue(vec3 color, float hue) {
+                    float angle = hue * 6.28318; // Hue rotation in radians
+                    float s = sin(angle), c = cos(angle);
+                    mat3 rgb2yiq = mat3(
+                        0.299, 0.587, 0.114,
+                        0.596, -0.274, -0.322,
+                        0.211, -0.523, 0.312
+                    );
+                    mat3 yiq2rgb = mat3(
+                        1.0, 0.956, 0.621,
+                        1.0, -0.272, -0.647,
+                        1.0, -1.107, 1.705
+                    );
+                    vec3 yiq = rgb2yiq * color;
+                    float y = yiq.x;
+                    yiq.yz = mat2(c, -s, s, c) * yiq.yz;
+                    return yiq2rgb * yiq;
+                }
+
+                vec3 applySaturation(vec3 color, float saturation) {
+                    float grey = dot(color, vec3(0.3, 0.59, 0.11));
+                    return mix(vec3(grey), color, saturation);
+                }
+
+                vec3 applyBrightness(vec3 color, float brightness) {
+                    return color * brightness;
+                }
+
+                void main() {
+                    vec3 color = textureCube(envMap, vWorldPosition).rgb;
+                    color = applyHue(color, hue);
+                    color = applySaturation(color, saturation);
+                    color = applyBrightness(color, brightness);
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+            side: THREE.BackSide
+        });
+
+        // Apply the skybox material to a cube
+        const skyboxGeometry = new THREE.BoxGeometry(500, 500, 500);
+        const skyboxMesh = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+        scene.add(skyboxMesh);
+
+        camera.position.z = 1.5;
+
+        let isRotating = false;
+        let targetRotation = { x: 0, y: 0, z: 0 };
+        let currentRotation = { x: 0, y: 0, z: 0 };
+        let floating = true;
+
+        let lastFrameTime = 0;
+        const fps = 30; // Target frames per second
+
+        function animate(time) {
+            requestAnimationFrame(animate);
+
+            const delta = time - lastFrameTime;
+            if (delta < 1000 / fps) return;
+            lastFrameTime = time;
+
+            const timeInSeconds = time * 0.001;
+
+            if (!isRotating && floating) {
+                // Floating animation
+                cube.position.y = Math.sin(timeInSeconds * 0.75) * 0.02;
+                cube.position.x = Math.cos(timeInSeconds * 0.8) * 0.02;
+
+                // Rotation animation
+                cube.rotation.x = currentRotation.x + Math.sin(timeInSeconds * 0.5) * 0.05;
+                cube.rotation.y = currentRotation.y + Math.cos(timeInSeconds * 0.4) * 0.05;
+                cube.rotation.z = currentRotation.z + Math.sin(timeInSeconds * 0.3) * 0.03;
+            } else if (!isRotating && !floating) {
+                cube.position.y = 0;
+                cube.position.x = 0;
+                cube.rotation.x = currentRotation.x;
+                cube.rotation.y = currentRotation.y;
+                cube.rotation.z = currentRotation.z;
+            } else {
+                cube.rotation.x = THREE.MathUtils.lerp(cube.rotation.x, targetRotation.x, 0.1);
+                cube.rotation.y = THREE.MathUtils.lerp(cube.rotation.y, targetRotation.y, 0.1);
+                cube.rotation.z = THREE.MathUtils.lerp(cube.rotation.z, targetRotation.z, 0.1);
+            }
+
+            material.uniforms.time.value = timeInSeconds;
+
+            TWEEN.update();
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        backButton.addEventListener('click', () => {
+            resumeText.style.display = 'none'; // Hide the resume text immediately
+            aboutText.style.display = 'none'; // Hide the about text immediately
+            projectsText.style.display = 'none'; // Hide the projects text immediately
+            contactText.style.display = 'none'; // Hide the contact text immediately
+
+            targetRotation = { x: 0, y: 0, z: 0 };
+            floating = false;
+            isRotating = true;
+
+            new TWEEN.Tween(cube.rotation)
+                .to(targetRotation, 1000)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .onComplete(() => {
+                    isRotating = false;
+                    floating = true;
+                    backButton.style.display = 'none';
+                    currentRotation.x = targetRotation.x;
+                    currentRotation.y = targetRotation.y;
+                    currentRotation.z = targetRotation.z;
+                })
+                .start();
+
+            new TWEEN.Tween(camera.position)
+                .to({ z: 1.5 }, 1000)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .start();
+        });
+
+        window.addEventListener('click', (event) => {
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
+            );
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(textMeshes);
+
+            if (intersects.length > 0) {
+                const clickedMesh = intersects[0].object;
+                const clickedText = texts[textMeshes.indexOf(clickedMesh)];
+
+                targetRotation = { x: 0, y: 0, z: 0 };
+                floating = false;
+                isRotating = true;
+
+                new TWEEN.Tween(cube.rotation)
+                    .to(targetRotation, 500)
+                    .easing(TWEEN.Easing.Quadratic.InOut)
+                    .onComplete(() => {
+                        if (clickedText === 'About') {
+                            targetRotation = { x: Math.PI / 2, y: 0, z: 0 }; // Top face
+                            new TWEEN.Tween({})
+                                .to({}, 500)
+                                .onComplete(() => {
+                                    typeWriterEffect(aboutText);
+                                })
+                                .start();
+                        } else if (clickedText === 'Projects') {
+                            targetRotation = { x: 0, y: Math.PI / 2, z: 0 }; // Left face
+                            new TWEEN.Tween({})
+                                .to({}, 500)
+                                .onComplete(() => {
+                                    typeWriterEffect(projectsText);
+                                })
+                                .start();
+                        } else if (clickedText === 'Experience') {
+                            targetRotation = { x: 0, y: -Math.PI / 2, z: 0 };
+                            new TWEEN.Tween({})
+                                .to({}, 500)
+                                .onComplete(() => {
+                                    typeWriterEffect(resumeText);
+                                })
+                                .start();
+                        } else if (clickedText === 'Contact') {
+                            targetRotation = { x: -Math.PI / 2, y: 0, z: 0 }; // Bottom face
+                            new TWEEN.Tween({})
+                                .to({}, 500)
+                                .onComplete(() => {
+                                    typeWriterEffect(contactText);
+                                })
+                                .start();
+                        }
+
+                        new TWEEN.Tween(cube.rotation)
+                            .to(targetRotation, 1000)
+                            .easing(TWEEN.Easing.Quadratic.InOut)
+                            .onComplete(() => {
+                                isRotating = false;
+                                backButton.style.display = 'block';
+                                currentRotation.x = targetRotation.x;
+                                currentRotation.y = targetRotation.y;
+                                currentRotation.z = targetRotation.z;
+                            })
+                            .start();
+
+                        new TWEEN.Tween(camera.position)
+                            .to({ z: 1 }, 1000)
+                            .easing(TWEEN.Easing.Quadratic.InOut)
+                            .start();
+                    })
+                    .start();
+            }
+        });
+
+        function typeWriterEffect(element) {
+            const text = element.textContent;
+            element.innerHTML = '';
+            element.style.display = 'block';
+            let i = 0;
+            const speed = 3; // Speed of typing in milliseconds
+
+            function typeWriter() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, speed);
+                }
+            }
+
+            typeWriter();
+        }
+    </script>
+</body>
+</html>
