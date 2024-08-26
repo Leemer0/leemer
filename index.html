@@ -3,458 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liam</title>
+    <title>Liam Elia</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --text-color: #000000;
+            --background-color: #FFFFFF;
+            --accent-color: #666666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: "Times New Roman", Times, serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            color: #000000;
-            background-color: #FFFFFF;
-            overflow: hidden;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .container {
-            display: flex;
-            height: 100vh;
-        }
-        .header {
-            width: 300px;
-            padding: 40px;
-            box-sizing: border-box;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        #mobius-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200vmin;
-            height: 150vmin;
-            z-index: -1;
-        }
-        #mobius {
-            width: 100%;
-            height: 100%;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        nav ul li {
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            height: 60px;
-        }
-        .shape-container {
-            width: 52px;
-            height: 52px;
-            margin-right: 10px;
-        }
-        a {
-            color: #000000;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        a:hover, a.active {
-            color: #0000FF;
-        }
-        main {
-            margin-left: 300px;
-            padding: 40px;
-            flex-grow: 1;
-            overflow-y: auto;
-            height: 100vh;
-            box-sizing: border-box;
-        }
-        .content {
-            display: none;
+
+        header {
+            text-align: center;
             margin-bottom: 40px;
         }
+
+        #logo-container {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto 20px;
+        }
+
+        nav {
+            margin-bottom: 40px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: var(--accent-color);
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        .content {
+            display: none;
+        }
+
         .content.active {
             display: block;
         }
 
-        #yourfable {
-            width: 750px;
+        .work-list, .project-list {
+            list-style-type: none;
         }
 
-        #flogo {
-            width: 50px;
+        .work-list li, .project-list li {
+            margin-bottom: 20px;
         }
 
-        #surf {
-            width: 500px;
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        #photos {
-            width:400px;
+        .image-grid img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .project img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="mobius-container">
-        <canvas id="mobius"></canvas>
-    </div>
-    <div class="container">
-        <div class="header">
-            <nav>
-                <ul>
-                    <li>
-                        <div class="shape-container" id="about-shape"></div>
-                        <a href="#" onclick="showSection('about'); return false;">About.</a>
-                    </li>
-                    <li>
-                        <div class="shape-container" id="experience-shape"></div>
-                        <a href="#" onclick="showSection('experience'); return false;">Resume.</a>
-                    </li>
-                    <li>
-                        <div class="shape-container" id="projects-shape"></div>
-                        <a href="#" onclick="showSection('projects'); return false;">Projects.</a>
-                    </li>
-                    <li>
-                        <div class="shape-container" id="contact-shape"></div>
-                        <a href="#" onclick="showSection('contact'); return false;">Contact.</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <main>
-            <section id="about" class="content">
-                <br>
-                <p>I'm Liam, here's my website. Pretty much always trying to learn more about product management, strategy, and business operations. I want to be a player in whatever industry I end up in. If you have found my site, let me take the moment to thank you and extend an invitation to connect, always looking to have interesting conversations. I am an enthusiastic explorer of various disciplines, deeply interested in the intersections between technology, business, and environmental sustainability. With a background in business affairs in the film industry, I have transitioned my focus towards sectors that I believe provide valuable service to society, where I seek to leverage my skills in data analysis, product management, and AI implementation to drive impactful change.
+    <header>
+        <div id="logo-container"></div>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showSection('about')">About</a></li>
+                <li><a href="#" onclick="showSection('experience')">Resume</a></li>
+                <li><a href="#" onclick="showSection('projects')">Projects</a></li>
+                <li><a href="#" onclick="showSection('interests')">Interests</a></li>
+            </ul>
+        </nav>
+    </header>
 
-                    <br><br>Things we could discuss besides my current unemployed status: Muay Thai, Art History and Cultures, Travel, Running, Sailing, Surfing</p>
-                    
-                    <p>Recent reads:
+    <main>
+        <section id="about" class="content">
+            <h1>About Me</h1>
+            <p>I'm Liam, here's my website. Pretty much always trying to learn more about product management, strategy, and business operations. I want to be a player in whatever industry I end up in. If you have found my site, let me take the moment to thank you and extend an invitation to connect, always looking to have interesting conversations. I am an enthusiastic explorer of various disciplines, deeply interested in the intersections between technology, business, and environmental sustainability. With a background in business affairs in the film industry, I have transitioned my focus towards sectors that I believe provide valuable service to society, where I seek to leverage my skills in data analysis, product management, and AI implementation to drive impactful change.</p>
+        </section>
+
+        <section id="experience" class="content">
+            <h2>Experience</h2>
+            <ul class="work-list">
+                <li>
+                    <h3>Travel Break - Vietnam, Cambodia, Thailand, China, Japan</h3>
+                    <p>June 2023 - Present</p>
                     <ul>
-                    <li><em>The Wager</em> by David Grann</li>
-                    <li><em>Dune Series</em> by Frank Herbert</li>
-                    <li><em>Hyperion</em> by Dan Simmons</li>
-                    <li><em>Name of the Wind</em> by Patrick Rothfuss</li>
-                    <li><em>A Fire Upon The Deep</em> by Vernor Vinge</li>
-                    <li><em>Crime & Punishment</em> by Fyodor Dostoevsky</li>
-                    <li><em>Pacific Crucible: War in the Pacific</em> by Ian W. Toll</li>
+                        <li>Gained valuable business insights by immersing myself in diverse cultural and market environments</li>
                     </ul>
-                
-                    </p>
-                <p>Photos</p>
-                <div class="image-grid">
-                    <img id="photos" src="images/1.jpeg">
-                    <img id="photos" src="images/2.jpeg">
-                    <img id="photos" src="images/3.jpeg">
-                    <img id="photos" src="images/4.jpeg">
-                    <img id="photos" src="images/5.jpeg">
-                    <img id="photos" src="images/6.jpeg">
-                    <img id="photos" src="images/7.jpeg">
-                    <img id="photos" src="images/8.jpeg">
-                    <img id="photos" src="images/9.jpeg">
-                    <img id="photos" src="images/10.jpeg">
-                    <img id="photos" src="images/11.jpeg">
-                    <img id="photos" src="images/12.jpeg">
-                </div>
-
-            </section>
-
-            <section id="experience" class="content">
-                <h2>Liam Elia</h2>
-                <p><a href="https://linkedin.com/in/liam-elia">linkedin.com/in/liam-elia</a></p>
+                </li>
+                <li>
+                    <h3>Reel One Entertainment - Business Affairs Coordinator, Film Development</h3>
+                    <p>August 2022 - June 2023</p>
+                    <ul>
+                        <li>Supported Chief Operations Officer in administrative functions</li>
+                        <li>Successfully negotiated contracts with writers and third-party production companies, meeting all deadlines and contributing to a 20% increase in project efficiency</li>
+                        <li>Generated comprehensive reports analyzing genre distribution, leading to data-driven decisions that optimized project development strategies</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Reel One Entertainment - Business Affairs Assistant</h3>
+                    <p>February - August 2022</p>
+                    <ul>
+                        <li>Optimized the motion picture copyright application process, reducing application time by 90% and cutting cost</li>
+                        <li>Facilitated the opening of bank accounts for 52 productions, ensuring timely access to funds and minimizing production delays</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Canada Guaranty Mortgage Insurance - Operations Support Analyst</h3>
+                    <p>March - November 2021</p>
+                    <ul>
+                        <li>Created and maintained production reports on key metrics for partners and risk team, resulting in a 25% improvement in data accuracy and reporting efficiency</li>
+                        <li>Managed property appraisals across Canada, reducing appraisal turnaround time by 20% and enhancing customer satisfaction</li>
+                        <li>Provided exceptional customer support to external mortgage brokers</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Lake of Bays Sailing Club - Sailing Coach</h3>
+                    <p>2016 - 2019</p>
+                    <ul>
+                        <li>Mentored and coached athletes, achieving success at regional and national competitions</li>
+                    </ul>
+                </li>
+            </ul>
             
-                <h3>Experience</h3>
-                <ul>
-                    <li>
-                        <strong>Travel Break</strong> - Vietnam, Cambodia, Thailand, China, Japan (June 2023 - Present)
-                        <ul>
-                            <li>Gained valuable business insights by immersing myself in diverse cultural and market environments</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>Reel One Entertainment</strong> - Business Affairs Coordinator, Film Development (August 2022 - June 2023)
-                        <ul>
-                            <li>Supported Chief Operations Officer in administrative functions</li>
-                            <li>Successfully negotiated contracts with writers and third-party production companies, meeting all deadlines and contributing to a 20% increase in project efficiency</li>
-                            <li>Generated comprehensive reports analyzing genre distribution, leading to data-driven decisions that optimized project development strategies</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>Reel One Entertainment</strong> - Business Affairs Assistant (February - August 2022)
-                        <ul>
-                            <li>Optimized the motion picture copyright application process, reducing application time by 90% and cutting cost</li>
-                            <li>Facilitated the opening of bank accounts for 52 productions, ensuring timely access to funds and minimizing production delays</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>Canada Guaranty Mortgage Insurance</strong> - Operations Support Analyst (March - November 2021)
-                        <ul>
-                            <li>Created and maintained production reports on key metrics for partners and risk team, resulting in a 25% improvement in data accuracy and reporting efficiency</li>
-                            <li>Managed property appraisals across Canada, reducing appraisal turnaround time by 20% and enhancing customer satisfaction</li>
-                            <li>Provided exceptional customer support to external mortgage brokers</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>Lake of Bays Sailing Club</strong> - Sailing Coach (2016 - 2019)
-                        <ul>
-                            <li>Mentored and coached athletes, achieving success at regional and national competitions</li>
-                        </ul>
-                    </li>
-                </ul>
-            
-                <h3>Education</h3>
-                <ul>
-                    <li>
-                        <strong>Coursera</strong> - IBM AI Product Management Certificate (May 2024)
-                        <ul>
-                            <li>Developed strong product management skills and agile methodologies, with a focus on integrating AI technologies into product solutions</li>
-                            <li>Completed hands-on projects, including AI-powered text and image generation, and predictive modeling</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>GoPractice</strong> - Data-Driven Product Management Simulator Certificate (April 2024)
-                        <ul>
-                            <li>Gained hands-on experience in product management through a comprehensive simulator, making key product development and growth decisions based on real data</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>Datacamp</strong> - Data Analyst, Python Certificate (February 2024)
-                        <ul>
-                            <li>Developed data analysis skills to manipulate, analyze, and visualize data with Pandas and Python</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>Queen's University</strong> - Bachelor of Arts (Honours), Film & Media (2016-2020)
-                    </li>
-                </ul>
-            </section>
+            <h2>Education</h2>
+            <ul class="work-list">
+                <li>
+                    <h3>Coursera - IBM AI Product Management Certificate</h3>
+                    <p>May 2024</p>
+                    <ul>
+                        <li>Developed strong product management skills and agile methodologies, with a focus on integrating AI technologies into product solutions</li>
+                        <li>Completed hands-on projects, including AI-powered text and image generation, and predictive modeling</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>GoPractice - Data-Driven Product Management Simulator Certificate</h3>
+                    <p>April 2024</p>
+                    <ul>
+                        <li>Gained hands-on experience in product management through a comprehensive simulator, making key product development and growth decisions based on real data</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Datacamp - Data Analyst, Python Certificate</h3>
+                    <p>February 2024</p>
+                    <ul>
+                        <li>Developed data analysis skills to manipulate, analyze, and visualize data with Pandas and Python</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Queen's University - Bachelor of Arts (Honours), Film & Media</h3>
+                    <p>2016-2020</p>
+                </li>
+            </ul>
+        </section>
 
-            <section id="projects" class="content">
-                <img src="images/Fablelogo.png" id="flogo"><p><strong>yourFable.io</strong> - Created a website leveraging stable diffusion and AI to generate custom children's books using print-to-order service for delivery.</p>
-                <p><em>Python, Stable Diffusion, ComfyUI, Replicate, Flask, Javascript, HTML/CSS</em></p>
-                <img id="yourfable" src="images/girlBook.jpg"> <img id="yourfable" src="images/boyBook.jpg">
-
-                <br><img src="images/plogo.png" id="flogo"><p><strong>pdf2pod.com</strong> - Convert pdfs, notes, textbooks chapters into 20 minute podcasts using OpenAI's organic TTS capabilities and gpt-4o-mini</p>
-                <p><em>Python, OpenAI API, Supabase, SQL, FASTAPI, Javascript, HTML/CSS</em></p>
+        <section id="projects" class="content">
+            <h2>Projects</h2>
+            <div class="project">
+                <h3>yourFable.io</h3>
+                <img src="images/Fablelogo.png" alt="yourFable.io Logo" style="width: 100px;">
+                <p>Created a website leveraging stable diffusion and AI to generate custom children's books using print-to-order service for delivery.</p>
+                <p><em>Technologies: Python, Stable Diffusion, ComfyUI, Replicate, Flask, Javascript, HTML/CSS</em></p>
+                <img src="images/girlBook.jpg" alt="Girl Book Example">
+                <img src="images/boyBook.jpg" alt="Boy Book Example">
+            </div>
+            <div class="project">
+                <h3>pdf2pod.com</h3>
+                <img src="images/plogo.png" alt="pdf2pod.com Logo" style="width: 100px;">
+                <p>Convert pdfs, notes, textbooks chapters into 20 minute podcasts using OpenAI's organic TTS capabilities and gpt-4o-mini</p>
+                <p><em>Technologies: Python, OpenAI API, Supabase, SQL, FASTAPI, Javascript, HTML/CSS</em></p>
                 <audio controls>
                     <source src="images/sample.mp3" type="audio/mpeg">
                     Your browser does not support the audio element.
-                </audio><br>
-                <img id="yourfable" src="images/pok.png">
+                </audio>
+                <img src="images/pok.png" alt="pdf2pod.com Interface">
+            </div>
+            <div class="project">
+                <h3>Toronto Surf Co.</h3>
+                <p>Designed logo and brand for inland surf venture in Toronto</p>
+                <p><em>Technologies: Figma, Illustrator, Photoshop</em></p>
+                <img src="images/TSC_logo.JPG" alt="Toronto Surf Co. Logo">
+                <img src="images/TSC_samples.JPG" alt="Toronto Surf Co. Samples">
+            </div>
+        </section>
 
-                <br><p><strong>Toronto Surf Co.</strong> - Designed logo and brand for inland surf venture in Toronto</p>
-                <p><em>Figma, Illustrator, Photoshop</em></p>
-                <img id="surf" src="images/TSC_logo.JPG"> <img id="surf" src="images/TSC_samples.JPG">
-
-
-            </section>
-
-            <section id="contact" class="content">
-                <p>Email: liamjaelia@gmail.com</p>
-            </section>
-        </main>
-    </div>
-
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.151.0/three.module.min.js",
-            "three/addons/": "https://threejs.org/examples/jsm/"
-        }
-    }
-    </script>
-    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
-    <script type="module">
-        import * as THREE from 'three';
-
-        const canvasEl = document.querySelector("#mobius");
-
-        let renderer, scene, camera, clock, strips, menuShapes;
-        const floatSpeed = 0.001;
-
-        const params = {
-            stripeWidth: 1,
-            segments: 50,
-        };
-
-        initScene();
-        render();
-        window.addEventListener('resize', onWindowResize);
-
-        function initScene() {
-            scene = new THREE.Scene();
-
-            const aspect = canvasEl.clientWidth / canvasEl.clientHeight;
-            camera = new THREE.PerspectiveCamera(40, aspect, 1, 50);
-            camera.position.set(0, 1, 5);
-            camera.lookAt(0, 0, 0);
-
-            clock = new THREE.Clock();
-
-            renderer = new THREE.WebGLRenderer({
-                antialias: true,
-                alpha: true,
-                canvas: canvasEl
-            });
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.setSize(canvasEl.clientWidth, canvasEl.clientHeight);
-
-            const material = new THREE.MeshToonMaterial({
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.6,
-                color: 0xDCF764,
-            });
-
-            strips = [
-                new THREE.Mesh(getStripGeometry(), material.clone()),
-                new THREE.Mesh(getStripGeometry(), material.clone()),
-                new THREE.Mesh(getStripGeometry(), material.clone())
-            ];
-
-            strips[0].position.set(-2, 0, 0);
-            strips[2].position.set(2, 0, 0);
-
-            strips.forEach(strip => scene.add(strip));
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-            directionalLight.position.set(5, 5, 5);
-            scene.add(directionalLight);
-
-            menuShapes = createMenuShapes();
-        }
-
-        function createMenuShapes() {
-            const shapes = {};
-            const shapeGeometries = [
-                new THREE.TorusGeometry(0.525, 0.175, 16, 100),
-                new THREE.OctahedronGeometry(0.525),
-                new THREE.TorusKnotGeometry(0.35, 0.1225, 100, 16),
-                new THREE.TetrahedronGeometry(0.7)
-            ];
-            const shapeMaterial = new THREE.MeshPhongMaterial({ color: 0x0000FF, shininess: 100 });
-
-            ['about', 'experience', 'projects', 'contact'].forEach((id, index) => {
-                const shape = new THREE.Mesh(shapeGeometries[index], shapeMaterial);
-                shapes[id] = {
-                    mesh: shape,
-                    renderer: new THREE.WebGLRenderer({ antialias: true, alpha: true }),
-                    scene: new THREE.Scene(),
-                    camera: new THREE.PerspectiveCamera(50, 1, 0.1, 10)
-                };
-
-                shapes[id].scene.add(shape);
-                shapes[id].scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-                const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-                pointLight.position.set(0, 0, 2);
-                shapes[id].scene.add(pointLight);
-                shapes[id].camera.position.z = 2.5;
-
-                shapes[id].renderer.setSize(52, 52);
-                document.getElementById(`${id}-shape`).appendChild(shapes[id].renderer.domElement);
-
-                shapes[id].mesh.visible = false;
-            });
-
-            return shapes;
-        }
-
-        function getStripGeometry() {
-            const geometry = new THREE.PlaneGeometry(1, 1, 5 * params.segments, params.segments);
-
-            const positionAttr = geometry.attributes.position;
-            const positions = positionAttr.array;
-
-            for (let i = 0; i < positions.length; i += 3) {
-                const mobiusCoords = mobiusStripPoint(positions[i], positions[i + 1]);
-                positions[i] = mobiusCoords[0];
-                positions[i + 1] = mobiusCoords[1];
-                positions[i + 2] = mobiusCoords[2];
-            }
-
-            positionAttr.copyArray(positions);
-            geometry.rotateX(.5 * Math.PI);
-            geometry.rotateZ(.1 * Math.PI);
-            geometry.computeVertexNormals();
-
-            return geometry;
-        }
-
-        function mobiusStripPoint(x, y) {
-            const yy = y * params.stripeWidth;
-            const angle = 2 * Math.PI * x;
-            const r = 1 + yy * Math.cos(angle);
-            const x1 = Math.cos(angle) * r;
-            const y1 = Math.sin(angle) * r;
-            const z1 = yy * Math.sin(angle);
-            return [x1, y1, z1];
-        }
-
-        function render(t) {
-            const elapsedTime = clock.getElapsedTime();
+        <section id="interests" class="content">
+            <h2>Interests</h2>
+            <p>Muay Thai, Art History and Cultures, Travel, Running, Sailing, Surfing</p>
             
-            strips.forEach((strip, index) => {
-                strip.rotation.x = elapsedTime * floatSpeed * 20 + index * Math.PI / 3;
-                strip.rotation.y = elapsedTime * floatSpeed * 10 + index * Math.PI / 3;
-                strip.position.y = Math.sin(elapsedTime * floatSpeed * 2 + index * Math.PI / 2) * 0.2;
+            <h3>Recent Reads</h3>
+            <ul>
+                <li><em>The Wager</em> by David Grann</li>
+                <li><em>Dune Series</em> by Frank Herbert</li>
+                <li><em>Hyperion</em> by Dan Simmons</li>
+                <li><em>Name of the Wind</em> by Patrick Rothfuss</li>
+                <li><em>A Fire Upon The Deep</em> by Vernor Vinge</li>
+                <li><em>Crime & Punishment</em> by Fyodor Dostoevsky</li>
+                <li><em>Pacific Crucible: War in the Pacific</em> by Ian W. Toll</li>
+            </ul>
+            
+            <h3>Photos</h3>
+            <div class="image-grid">
+                <img src="images/1.jpeg" alt="Interest Photo 1">
+                <img src="images/2.jpeg" alt="Interest Photo 2">
+                <img src="images/3.jpeg" alt="Interest Photo 3">
+                <img src="images/4.jpeg" alt="Interest Photo 4">
+                <img src="images/5.jpeg" alt="Interest Photo 5">
+                <img src="images/6.jpeg" alt="Interest Photo 6">
+                <img src="images/7.jpeg" alt="Interest Photo 7">
+                <img src="images/8.jpeg" alt="Interest Photo 8">
+                <img src="images/9.jpeg" alt="Interest Photo 9">
+                <img src="images/10.jpeg" alt="Interest Photo 10">
+                <img src="images/11.jpeg" alt="Interest Photo 11">
+                <img src="images/12.jpeg" alt="Interest Photo 12">
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.content').forEach(section => {
+                section.classList.remove('active');
             });
-
-            Object.values(menuShapes).forEach(shape => {
-                if (shape.mesh.visible) {
-                    shape.mesh.rotation.x += 0.01;
-                    shape.mesh.rotation.y += 0.01;
-                    shape.renderer.render(shape.scene, shape.camera);
-                }
-            });
-
-            renderer.render(scene, camera);
-            requestAnimationFrame(render);
-        }
-
-        function onWindowResize() {
-            const container = document.getElementById('mobius-container');
-            const size = Math.min(container.clientWidth, container.clientHeight);
-            renderer.setSize(size, size);
-            camera.aspect = 1;
-            camera.updateProjectionMatrix();
-        }
-
-        window.showSection = function(sectionId) {
-            document.querySelectorAll('.content').forEach(function (section) {
-                section.style.display = 'none';
-            });
-            const selectedSection = document.getElementById(sectionId);
-            selectedSection.style.display = 'block';
-
+            document.getElementById(sectionId).classList.add('active');
+            
             document.querySelectorAll('nav a').forEach(link => {
                 link.classList.remove('active');
             });
-            const selectedLink = document.querySelector(`nav a[onclick*="${sectionId}"]`);
-            selectedLink.classList.add('active');
+            document.querySelector(`nav a[onclick*="${sectionId}"]`).classList.add('active');
+        }
 
-            Object.keys(menuShapes).forEach(key => {
-                menuShapes[key].mesh.visible = (key === sectionId);
-                if (key === sectionId) {
-                    menuShapes[key].renderer.render(menuShapes[key].scene, menuShapes[key].camera);
-                }
+        function createLogo() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(250, 250);  // Increased size from 200x200 to 250x250
+            document.getElementById('logo-container').appendChild(renderer.domElement);
+
+            const galaxyGeometry = new THREE.BufferGeometry();
+            const galaxyMaterial = new THREE.PointsMaterial({
+                size: 0.045,  // Slightly increased point size
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                vertexColors: true  // Enable vertex colors
             });
 
-            // Align content with menu item
-            const menuItem = selectedLink.closest('li');
-            const menuItemRect = menuItem.getBoundingClientRect();
-            const mainContent = document.querySelector('main');
-            mainContent.scrollTop = menuItemRect.top - mainContent.offsetTop;
+            const particlesCount = 15000;  // Increased particle count for more detail
+            const positions = new Float32Array(particlesCount * 3);
+            const colors = new Float32Array(particlesCount * 3);
+
+            const colorPalette = [
+                new THREE.Color(0xFFFFFF),  // White (most common)
+                new THREE.Color(0xFFD700),  // Gold
+                new THREE.Color(0x87CEEB),  // Sky Blue
+                new THREE.Color(0xFFA500)   // Orange
+            ];
+
+            for (let i = 0; i < particlesCount; i++) {
+                const i3 = i * 3;
+                const radius = Math.random() * 2.5;  // Increased radius for a larger galaxy
+                const spinAngle = radius * 5;
+                const branchAngle = (i % 3) * 2 * Math.PI / 3;
+
+                positions[i3] = Math.cos(branchAngle + spinAngle) * radius;
+                positions[i3 + 1] = (Math.random() - 0.5) * 0.3;
+                positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius;
+
+                // Color selection
+                const colorIndex = Math.random() < 0.95 ? 0 : Math.floor(Math.random() * 3) + 1;  // 95% white, 5% other colors
+                const color = colorPalette[colorIndex];
+
+                colors[i3] = color.r;
+                colors[i3 + 1] = color.g;
+                colors[i3 + 2] = color.b;
+            }
+
+            galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
+            scene.add(galaxy);
+
+            camera.position.z = 4;  // Adjusted camera position for the larger galaxy
+
+            function animate() {
+                requestAnimationFrame(animate);
+                galaxy.rotation.y += 0.0015;  // Slowed down rotation slightly
+                renderer.render(scene, camera);
+            }
+            animate();
         }
+
+        // Initialize
+        showSection('about');
+        createLogo();
     </script>
 </body>
 </html>
