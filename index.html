@@ -292,68 +292,97 @@
             });
             document.querySelector(`nav a[onclick*="${sectionId}"]`).classList.add('active');
         }
-
+    
         function createLogo() {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(250, 250);  // Increased size from 200x200 to 250x250
+            renderer.setSize(250, 250);
             document.getElementById('logo-container').appendChild(renderer.domElement);
-
+    
             const galaxyGeometry = new THREE.BufferGeometry();
             const galaxyMaterial = new THREE.PointsMaterial({
-                size: 0.045,  // Slightly increased point size
+                size: 0.045,
                 blending: THREE.AdditiveBlending,
                 transparent: true,
-                vertexColors: true  // Enable vertex colors
+                vertexColors: true
             });
-
-            const particlesCount = 15000;  // Increased particle count for more detail
+    
+            const particlesCount = 15000;
             const positions = new Float32Array(particlesCount * 3);
             const colors = new Float32Array(particlesCount * 3);
-
+            const angles = new Float32Array(particlesCount);
+            const radiusArray = new Float32Array(particlesCount);
+    
             const colorPalette = [
-                new THREE.Color(0xFFFFFF),  // White (most common)
-                new THREE.Color(0xFFD700),  // Gold
+                new THREE.Color(0xFAF9F6),  // White (most common)
+                new THREE.Color(0xA9454F),  // Gold
                 new THREE.Color(0x87CEEB),  // Sky Blue
                 new THREE.Color(0xFFA500)   // Orange
             ];
-
+    
             for (let i = 0; i < particlesCount; i++) {
                 const i3 = i * 3;
-                const radius = Math.random() * 2.5;  // Increased radius for a larger galaxy
+                const radius = Math.random() * 2.5;
                 const spinAngle = radius * 5;
                 const branchAngle = (i % 3) * 2 * Math.PI / 3;
-
-                positions[i3] = Math.cos(branchAngle + spinAngle) * radius;
-                positions[i3 + 1] = (Math.random() - 0.5) * 0.3;
-                positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius;
-
-                // Color selection
-                const colorIndex = Math.random() < 0.95 ? 0 : Math.floor(Math.random() * 3) + 1;  // 95% white, 5% other colors
+    
+                angles[i] = branchAngle + spinAngle;
+                radiusArray[i] = radius;
+    
+                positions[i3] = Math.cos(angles[i]) * radius;
+                positions[i3 + 1] = Math.sin(angles[i]) * radius;
+                positions[i3 + 2] = (Math.random() - 0.5) * 0.3;
+    
+                const colorIndex = Math.random() < 0.95 ? 0 : Math.floor(Math.random() * 3) + 1;
                 const color = colorPalette[colorIndex];
-
+    
                 colors[i3] = color.r;
                 colors[i3 + 1] = color.g;
                 colors[i3 + 2] = color.b;
             }
-
+    
             galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
+    
             const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
             scene.add(galaxy);
-
-            camera.position.z = 4;  // Adjusted camera position for the larger galaxy
-
+    
+            camera.position.z = 4;
+    
             function animate() {
                 requestAnimationFrame(animate);
-                galaxy.rotation.y += 0.0015;  // Slowed down rotation slightly
+    
+                const positions = galaxyGeometry.attributes.position.array;
+    
+                for (let i = 0; i < particlesCount; i++) {
+                    const i3 = i * 3;
+    
+                    // Update angle
+                    angles[i] += 0.0015 / Math.max(radiusArray[i], 0.5);
+    
+                    // Update radius (slowly decrease)
+                    radiusArray[i] -= 0.0005;
+    
+                    // Reset particle if it reaches the center
+                    if (radiusArray[i] <= 0.1) {
+                        radiusArray[i] = 2.5;
+                        angles[i] = Math.random() * Math.PI * 2;
+                    }
+    
+                    // Update positions
+                    positions[i3] = Math.cos(angles[i]) * radiusArray[i];
+                    positions[i3 + 1] = Math.sin(angles[i]) * radiusArray[i];
+                }
+    
+                galaxyGeometry.attributes.position.needsUpdate = true;
+    
+                galaxy.rotation.z += 0.0015;
                 renderer.render(scene, camera);
             }
             animate();
         }
-
+    
         // Initialize
         showSection('about');
         createLogo();
