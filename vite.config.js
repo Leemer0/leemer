@@ -21,5 +21,5 @@ export default defineConfig({
             clientPort: 5200,
         }
     },
-    base: "/liam-elia/"
+    base: "/"
 });
