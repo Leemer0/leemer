@@ -16,6 +16,15 @@ import travel4 from '@me_imgs/travel4.jpeg';
 import travel5 from '@me_imgs/travel5.jpeg';
 import travel6 from '@me_imgs/travel6.jpeg';
 
+// Imported static assets (moved from public/ to src/assets/ for bundling)
+import straitChokepoint from './assets/strait-chokepoint.png';
+import chart1 from './assets/chart1.png';
+import star1 from './assets/star-1.png';
+import videoMp4 from './assets/video.mp4';
+import soulbeamHome from './assets/soulbeam-home.jpeg';
+import beamLanding from './assets/beam-landingpage.png';
+import storybookDiffusion from './assets/storybook-diffusion.jpeg';
+import heroImg from './assets/hero_img.png';
 
 class QuickFPS1 {
   constructor() {
@@ -913,8 +922,8 @@ class QuickFPS1 {
         </div>
         <div class="pd-body">
           <div class="pd-media multi">
-            <img src="/strait-chokepoint.png" alt="Strait of Hormuz oil tanker chokepoint map" />
-            <img src="/chart1.png" alt="Strait of Hormuz Passages and Oil Price chart" />
+            <img src="${straitChokepoint}" alt="Strait of Hormuz oil tanker chokepoint map" />
+            <img src="${chart1}" alt="Strait of Hormuz Passages and Oil Price chart" />
           </div>
           <div class="pd-desc">
             <p><b>Context</b>: Amid Iran–U.S./Israel tensions and the risk of a temporary closure, I explored how crude flows through the Strait of Hormuz relate to oil prices.</p>
@@ -945,9 +954,9 @@ class QuickFPS1 {
         </div>
         <div class="pd-body">
           <div class="pd-media multi">
-            <img class="logo" src="/star (1).png" alt="Soulbeam star symbol" />
-            <video class="demo" src="/video.mp4" poster="/soulbeam-home.jpeg" autoplay playsinline muted loop></video>
-            <img class="screenshot" src="/beam-landingpage.png" alt="Soulbeam landing page" />
+            <img class="logo" src="${star1}" alt="Soulbeam star symbol" />
+            <video class="demo" src="${videoMp4}" poster="${soulbeamHome}" autoplay playsinline muted loop></video>
+            <img class="screenshot" src="${beamLanding}" alt="Soulbeam landing page" />
           </div>
           <div class="pd-desc">
             <p><b>Summary</b>: A voice-first personal journal that converses with you in real time and turns daily reflections into lightweight insights.</p>
@@ -979,8 +988,8 @@ class QuickFPS1 {
         </div>
         <div class="pd-body">
           <div class="pd-media multi">
-            <img src="/storybook-diffusion.jpeg" alt="ComfyUI workflow for consistent character generation" />
-            <img src="/hero_img.png" alt="Personalized storybook cover example" />
+            <img src="${storybookDiffusion}" alt="ComfyUI workflow for consistent character generation" />
+            <img src="${heroImg}" alt="Personalized storybook cover example" />
           </div>
           <div class="pd-desc">
             <p><b>Summary</b>: A generator that turns a prompt or reference image into a printable children's storybook.</p>
