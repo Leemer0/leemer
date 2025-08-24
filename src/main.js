@@ -946,7 +946,7 @@ class QuickFPS1 {
         <div class="pd-body">
           <div class="pd-media multi">
             <img class="logo" src="/star (1).png" alt="Soulbeam star symbol" />
-            <video class="demo" src="/video.mov" poster="/soulbeam-home.jpeg" autoplay playsinline muted loop></video>
+            <video class="demo" src="/video.mp4" poster="/soulbeam-home.jpeg" autoplay playsinline muted loop></video>
             <img class="screenshot" src="/beam-landingpage.png" alt="Soulbeam landing page" />
           </div>
           <div class="pd-desc">
