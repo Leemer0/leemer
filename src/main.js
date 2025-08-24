@@ -16,15 +16,15 @@ import travel4 from '@me_imgs/travel4.jpeg';
 import travel5 from '@me_imgs/travel5.jpeg';
 import travel6 from '@me_imgs/travel6.jpeg';
 
-// Imported static assets (moved from public/ to src/assets/ for bundling)
-import straitChokepoint from './assets/strait-chokepoint.png';
-import chart1 from './assets/chart1.png';
-import star1 from './assets/star-1.png';
-import videoMp4 from './assets/video.mp4';
-import soulbeamHome from './assets/soulbeam-home.jpeg';
-import beamLanding from './assets/beam-landingpage.png';
-import storybookDiffusion from './assets/storybook-diffusion.jpeg';
-import heroImg from './assets/hero_img.png';
+// Imported static assets (now in me_imgs and accessed via @me_imgs alias)
+import straitChokepoint from '@me_imgs/strait-chokepoint.png';
+import chart1 from '@me_imgs/chart1.png';
+import star1 from '@me_imgs/star-1.png';
+import videoMp4 from '@me_imgs/video.mp4';
+import soulbeamHome from '@me_imgs/soulbeam-home.jpeg';
+import beamLanding from '@me_imgs/beam-landingpage.png';
+import storybookDiffusion from '@me_imgs/storybook-diffusion.jpeg';
+import heroImg from '@me_imgs/hero_img.png';
 
 class QuickFPS1 {
   constructor() {
