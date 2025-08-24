@@ -12,6 +12,8 @@ import MersenneTwister from 'mersenne-twister';
 const NUM_BUGS = 8;
 const BUG_SPAWN_RANGE = 20.0;
 const BUG_MAX_DIST = 50.0;
+// Global time scale for wind animation (lower = slower)
+const WIND_TIME_SCALE = 0.6;
 
 const M_TMP = new THREE.Matrix4();
 const AABB_TMP = new THREE.Box3();
@@ -113,7 +115,7 @@ export class WindComponent extends entity.Component {
   Update(timeElapsed) {
     this.#totalTime_ += timeElapsed;
 
-    this.#material_.uniforms.time.value = this.#totalTime_;
+    this.#material_.uniforms.time.value = this.#totalTime_ * WIND_TIME_SCALE;
 
     const threejs = this.FindEntity('threejs').GetComponent('ThreeJSController');
     const camera = threejs.Camera;

@@ -1,4 +1,73 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;900&display=swap');
+/* Custom font: Lokeya Alternate */
+@font-face {
+  font-family: 'Lokeya Alternate';
+  src: url('/fonts/Lokeya Alternate.woff2') format('woff2'),
+       url('/fonts/Lokeya Alternate.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* Map synthetic styles to same source so bold/italic requests use this file */
+@font-face {
+  font-family: 'Lokeya Alternate';
+  src: url('/fonts/Lokeya Alternate.woff2') format('woff2'),
+       url('/fonts/Lokeya Alternate.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lokeya Alternate';
+  src: url('/fonts/Lokeya Alternate.woff2') format('woff2'),
+       url('/fonts/Lokeya Alternate.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lokeya Alternate';
+  src: url('/fonts/Lokeya Alternate.woff2') format('woff2'),
+       url('/fonts/Lokeya Alternate.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+/* Custom font: Lokeya Alt (alternate filename) */
+@font-face {
+  font-family: 'Lokeya Alt';
+  src: url('/fonts/Lokeya Alt.woff2') format('woff2'),
+       url('/fonts/Lokeya Alt.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* Hide the default cursor and style a custom one */
+html, body {
+  cursor: none;
+}
+
+.custom-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(255, 180, 120, 0.6), 0 0 2px rgba(255, 255, 255, 0.9) inset;
+  backdrop-filter: blur(1px);
+  transition: width 0.12s ease, height 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+  z-index: 9999;
+}
+
+.custom-cursor.active {
+  width: 20px;
+  height: 20px;
+  border-color: rgba(255, 220, 180, 1.0);
+  box-shadow: 0 0 14px rgba(255, 200, 150, 0.9), 0 0 3px rgba(255, 255, 255, 1.0) inset;
+}
 
 body {
   width: 100%;
@@ -14,4 +83,374 @@ body {
   width: 100%;
   height: 100%;
   position: relative;
+}
+
+/* ===================== Portfolio Overlay ===================== */
+:root{
+  --ov-fg: #f5f7fb;
+  --ov-dim: rgba(0,0,0,.42);
+  --ov-soft: rgba(20,20,24,.28);
+  --ov-accent: #ff6fa5; /* warm pink */
+  --mil-primary: #8fbc8f; /* soft sage green */
+  --mil-secondary: #87ceeb; /* soft sky blue */
+  --mil-accent: #deb887; /* warm beige */
+  --mil-bg: rgba(25, 35, 30, 0.85); /* soft dark green */
+}
+
+#overlay{
+  position: fixed; inset: 0; z-index: 10;
+  pointer-events: none;
+  color: var(--ov-fg);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  text-shadow: 0 1px 8px rgba(0,0,0,.35);
+}
+
+#overlay .ov-gradient{
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 50% 65%, transparent 40%, rgba(0,0,0,.35) 100%),
+    linear-gradient(120deg, rgba(255,165,185,.12), rgba(255,210,165,.08));
+}
+
+.ov-header{
+  position: absolute; top: 18px; left: 24px; right: 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; pointer-events: auto;
+}
+
+/* header nav styles removed; buttons live in grass */
+
+/* remove hero styles (no hero shown) */
+
+.ov-chips{
+  position:absolute; left:24px; bottom:24px; display:flex; gap:10px; pointer-events:auto;
+}
+.ov-chips span{
+  padding:8px 12px; border-radius: 999px;
+  background: rgba(18,18,22,.45);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+@media (max-width: 640px){
+  .ov-nav a{ margin-left:12px; padding:6px 8px; }
+  .ov-chips{ left:16px; bottom:16px; }
+}
+
+/* Keep canvas interactive behind overlay */
+canvas#canvas, #threejs-canvas, .threejs-canvas { pointer-events: auto; }
+
+/* Military tag styles removed - creative mountain scene now in grass */
+
+/* ===================== Books List (inside Projects) ===================== */
+.books-panel { margin-top: 14px; border-top: 1px dashed rgba(255,255,255,0.18); padding-top: 10px; }
+.books-panel h3 { margin: 0 0 8px 0; font-weight: 600; font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mil-primary); }
+.book-list { margin: 0; padding-left: 16px; font-size: 12px; line-height: 1.6; color: rgba(230,240,235,0.9); }
+.book-list li { margin: 4px 0; }
+
+/* ===================== Grass Frame Buttons ===================== */
+.grass-frame-buttons {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frame-btn {
+  position: absolute;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 14px 26px;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 500; /* not bold */
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -6px 12px rgba(0,0,0,0.06);
+  pointer-events: auto;
+  /* Push further down into the grass box purely via CSS */
+  transform: translate(-50%, -50%) translateY(120px);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.frame-btn:hover {
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translate(-50%, -50%) translateY(120px) scale(1.045);
+  box-shadow: 
+    0 10px 20px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.frame-btn:active {
+  transform: translate(-50%, -50%) translateY(120px) scale(0.985);
+  box-shadow: 
+    0 1px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.frame-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Position buttons within the grass frame area (small horizontal spread) */
+#projects-btn { transform: translate(-50%, -50%) translateX(-48px) translateY(110px); }
+#linkedin-btn { transform: translate(-50%, -50%) translateX(48px) translateY(110px); }
+
+/* Liquid/glass highlights */
+.frame-btn::before {
+  content: "";
+  position: absolute;
+  inset: -40% -40% auto -40%;
+  height: 80%;
+  background: radial-gradient(120px 60px at 20% 10%, rgba(255,255,255,0.14), rgba(255,255,255,0.05) 60%, transparent 70%);
+  transform: rotate(-12deg) translateY(-20%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+.frame-btn::after {
+  content: "";
+  position: absolute;
+  bottom: -30%;
+  right: -10%;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), rgba(255,255,255,0.04) 55%, transparent 60%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+/* Cursor reaction on buttons */
+.custom-cursor.on-button {
+  width: 30px;
+  height: 30px;
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 18px rgba(190, 230, 255, 0.9), 0 0 3px rgba(255, 255, 255, 0.95) inset;
+}
+
+/* ===================== Projects Overlay ===================== */
+.projects-open #linkedin-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.projects-open #projects-btn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Full-screen overlay for projects */
+.projects-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  transform: scale(0.98);
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+.projects-open .projects-overlay {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.projects-title {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.92);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 18px;
+  letter-spacing: 1.2px;
+}
+
+.projects-content {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px 24px;
+  overflow: hidden;
+  pointer-events: auto;
+  color: rgba(255,255,255,0.9);
+  display: flex;
+  gap: 16px;
+}
+
+/* Close control sits at top-right of the full overlay (inside #projects-btn) */
+.projects-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18,18,22,0.3);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.92);
+  font-size: 18px;
+  line-height: 1;
+  pointer-events: auto;
+  cursor: none;
+  z-index: 10;
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+}
+.projects-close:hover {
+  border-color: rgba(255,255,255,0.3);
+}
+
+/* Projects split layout */
+.projects-left, .projects-right { background: transparent; border: none; border-radius: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.projects-left { flex: 3 1 75%; min-width: 320px; position: relative; overflow: hidden; }
+.projects-right { flex: 1 1 25%; min-width: 260px; padding: 8px 8px 8px 8px; overflow: auto; }
+.projects-right h3 {
+  margin: 0 0 12px 0;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--mil-primary);
+}
+.project-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  border-left: 1px dashed rgba(255,255,255,0.18);
+  padding-left: 10px;
+}
+.project-item a {
+  display: block;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 8px;
+  color: rgba(220, 245, 220, 0.92);
+  text-decoration: none;
+  background: transparent;
+  transition: color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: none; /* prevent default hand cursor, use custom circle instead */
+}
+.project-item a:hover { background: rgba(255,255,255,0.06); color: var(--mil-primary); transform: translateX(2px); }
+
+.project-item a .idx {
+  color: rgba(255,255,255,0.45);
+  margin-right: 10px;
+}
+.project-item a .arrow {
+  float: right;
+  color: rgba(255,255,255,0.45);
+}
+.projects-globe-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Option to pin the particle globe to the top-left within its container */
+.projects-globe-canvas.top-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 260px;
+}
+
+/* Project detail panel in the blank area, avoids the top-left particle globe */
+.project-detail {
+  position: absolute;
+  top: 24px;
+  left: 300px; /* leave room for the particle globe */
+  right: 24px;
+  bottom: 24px;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.10);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  overflow: hidden;
+  pointer-events: auto;
+}
+.project-detail .pd-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 14px 16px 8px 16px;
+  color: rgba(240,245,250,0.95);
+  font-family: "IBM Plex Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+.project-detail .pd-header h4 { margin: 0; font-size: 14px; letter-spacing: 1.2px; text-transform: uppercase; }
+.project-detail .pd-header h4.small { font-size: 12px; letter-spacing: 1.1px; }
+.project-detail .pd-header .meta { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 1px; }
+.project-detail .pd-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; padding: 0 16px 16px 16px; height: calc(100% - 50px); }
+.project-detail .pd-desc { font-size: 12px; line-height: 1.6; color: rgba(230,240,235,0.9); overflow: auto; }
+.project-detail .pd-desc p { margin: 0 0 8px 0; }
+.project-detail .pd-desc ul { margin: 8px 0 12px 0; padding-left: 16px; }
+.project-detail .pd-desc li { margin: 6px 0; }
+.project-detail .pd-desc .note { font-size: 11px; color: rgba(200,230,255,0.75); }
+.project-detail .pd-media { border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: auto; background: rgba(255,255,255,0.04); }
+.project-detail .pd-media.multi { display: grid; grid-template-rows: auto auto; gap: 8px; padding: 6px; }
+.project-detail .pd-media.multi img.logo { max-height: 72px; width: auto; margin: 0 auto; }
+.project-detail .pd-media.multi img.screenshot { width: 100%; height: auto; border-radius: 6px; }
+.project-detail .pd-media video.demo { width: 100%; height: auto; display: block; border: 0; border-radius: 6px; background: #000; }
+.project-detail .pd-media iframe { width: 100%; height: 100%; display: block; border: 0; background: rgba(12,16,32,0.6); }
+.project-detail .pd-media img { width: 100%; height: auto; display: block; border: 0; object-fit: contain; background: transparent; }
+
+/* Soulbeam waitlist */
+.project-detail .pd-desc .waitlist { display: flex; gap: 8px; margin: 10px 0 14px 0; }
+.project-detail .pd-desc .waitlist input[type="email"] {
+  flex: 1 1 auto; min-width: 0; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(15,15,20,0.35); color: rgba(240,245,250,0.95);
+}
+.project-detail .pd-desc .waitlist button {
+  padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.28);
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06)); color: rgba(245,250,255,0.95);
+  cursor: none; letter-spacing: 0.6px;
+}
+
+/* Removed top-left always-on globe */
+
+@media (max-width: 900px) {
+  .projects-content {
+    flex-direction: column;
+    overflow: auto;
+  }
+  .projects-right {
+    max-height: 45vh;
+  }
 }

@@ -92,7 +92,9 @@ void main() {
   vec3 viewDir = normalize(cameraPosition - vWorldPosition);
 
 	vec4 diffuseColor = vec4( diffuse, opacity );
-	diffuseColor.rgb *= vTerrainColour;
+  // Slightly darken terrain under letters for contrast if grass is short there
+  float maskUnder = 0.0; // Placeholder; could be driven by a projected mask if needed
+  diffuseColor.rgb *= mix(vTerrainColour * 0.9, vTerrainColour, 1.0 - maskUnder);
 	float grid1 = texture(grid, vWorldPosition.xz * 0.1).r;
 	float grid2 = texture(grid, vWorldPosition.xz * 1.0).r;
 

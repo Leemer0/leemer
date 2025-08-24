@@ -20,6 +20,8 @@ varying vec3 vGrassColour;
 varying vec4 vGrassParams;
 varying vec3 vNormal2;
 varying vec3 vWorldPosition;
+varying float vMaskCut;
+varying float vMaskRaw;
 
 uniform vec2 grassSize;
 uniform vec4 grassParams;
@@ -29,6 +31,17 @@ uniform sampler2D heightmap;
 uniform vec4 heightParams;
 uniform vec3 playerPos;
 uniform mat4 viewMatrixInverse;
+// Mouse interaction uniforms
+uniform vec3 mousePos;
+uniform float mouseRadius;
+uniform float mouseStrength;
+// Name cut mask
+uniform sampler2D cutMask;
+uniform float cutMinScale;   // minimum height scale inside the mask (e.g., 0.2)
+uniform float cutFeather;    // feather width around 0.5 threshold (e.g., 0.05)
+uniform vec2 cutOffset;      // world-space XZ offset for mask center
+uniform vec2 cutScale;       // world-space size that maps to 1.0 UV (width, height)
+uniform float cutRotation;   // rotation in radians (around Y)
 
 attribute float vertIndex;
 
@@ -66,10 +79,26 @@ void main() {
   float randomShade = remap(hashVal1.y, -1.0, 1.0, 0.5, 1.0);
   float randomHeight = remap(hashVal1.z, 0.0, 1.0, 0.75, 1.5) * mix(1.0, 0.0, lodFadeIn) * isGrassAllowed * heightmapSampleHeight;
   float randomWidth = (1.0 - isSandy) * heightmapSampleHeight;
+  // Inside letters: slightly wider blades for fuller fill and calmer sway
+  randomWidth = mix(randomWidth, randomWidth * 1.22, vMaskCut);
   float randomLean = remap(hashVal1.w, 0.0, 1.0, 0.1, 0.4);
 
+  // Sample name cut mask in transformed world space (XZ)
+  vec2 rel = vec2(grassBladeWorldPos.x - cutOffset.x, grassBladeWorldPos.z - cutOffset.y);
+  float cr = cos(cutRotation);
+  float sr = sin(cutRotation);
+  mat2 R = mat2(cr, -sr, sr, cr);
+  rel = R * rel;
+  // Flip V to match canvas Y orientation (avoid mirrored text)
+  vec2 maskUV = vec2(rel.x / cutScale.x + 0.5, 1.0 - (rel.y / cutScale.y + 0.5));
+  float maskVal = texture2D(cutMask, maskUV).r;
+  float cut = smoothstep(0.5 - cutFeather, 0.5 + cutFeather, maskVal);
+  float cutScale = mix(1.0, cutMinScale, cut);
+  vMaskCut = cut;
+  vMaskRaw = maskVal;
+
   vec2 hashGrassColour = hash22(vec2(grassBladeWorldPos.x, grassBladeWorldPos.z));
-  float leanAnimation = noise12(vec2(time * 0.35) + grassBladeWorldPos.xz * 137.423) * 0.1;
+  float leanAnimation = noise12(vec2(time * 0.35) + grassBladeWorldPos.xz * 137.423) * 0.1 * mix(1.0, 0.7, vMaskCut);
 
   float GRASS_SEGMENTS = grassParams.x;
   float GRASS_VERTICES = grassParams.y;
@@ -85,7 +114,9 @@ void main() {
 
   float heightPercent = (vertID - xSide) / (GRASS_SEGMENTS * 2.0);
 
-  float grassTotalHeight = grassSize.y * randomHeight;
+  // Set heights: outside mask = 2x, inside mask = 1x (half of outside)
+  float heightScaleMask = mix(2.0, 1.0, vMaskCut);
+  float grassTotalHeight = grassSize.y * randomHeight * heightScaleMask;
   float grassTotalWidthHigh = easeOut(1.0 - heightPercent, 2.0);
   float grassTotalWidthLow = 1.0 - heightPercent;
   float grassTotalWidth = grassSize.x * mix(grassTotalWidthHigh, grassTotalWidthLow, highLODOut) * randomWidth;
@@ -100,13 +131,23 @@ void main() {
   windLeanAngle = easeIn(windLeanAngle, 2.0) * 1.25;
   vec3 windAxis = vec3(cos(windDir), 0.0, sin(windDir));
 
-  windLeanAngle *= heightPercent;
+  // Reduce sway inside letters to hold letterforms
+  windLeanAngle *= heightPercent * mix(1.0, 0.35, vMaskCut);
 
   float distToPlayer = distance(grassBladeWorldPos.xz, playerPos.xz);
   float playerFalloff = smoothstep(2.5, 1.0, distToPlayer);
   float playerLeanAngle = mix(0.0, 0.2, playerFalloff * linearstep(0.5, 0.0, windLeanAngle));
   vec3 grassToPlayer = normalize(vec3(playerPos.x, 0.0, playerPos.z) - vec3(grassBladeWorldPos.x, 0.0, grassBladeWorldPos.z));
   vec3 playerLeanAxis = vec3(grassToPlayer.z, 0, -grassToPlayer.x);
+
+  // Mouse interaction: bend away from cursor within radius
+  float distToMouse = distance(grassBladeWorldPos.xz, mousePos.xz);
+  // Smoother, softer falloff and slight time modulation for flowy feel
+  float mouseFalloff = smoothstep(mouseRadius * 1.2, 0.0, distToMouse);
+  float flow = 0.85 + 0.15 * sin(time * 2.0 + hashVal1.x * 6.2831);
+  float mouseLeanAngle = mouseStrength * mouseFalloff * flow;
+  vec3 grassToMouse = normalize(vec3(mousePos.x, 0.0, mousePos.z) - vec3(grassBladeWorldPos.x, 0.0, grassBladeWorldPos.z));
+  vec3 mouseLeanAxis = vec3(grassToMouse.z, 0, -grassToMouse.x);
 
   randomLean += leanAnimation;
 
@@ -123,7 +164,7 @@ void main() {
 
   vec3 ncurve = normalize(n1 - n2);
 
-  mat3 grassMat = rotateAxis(playerLeanAxis, playerLeanAngle) * rotateAxis(windAxis, windLeanAngle) * rotateY(randomAngle);
+  mat3 grassMat = rotateAxis(playerLeanAxis, playerLeanAngle) * rotateAxis(mouseLeanAxis, mouseLeanAngle) * rotateAxis(windAxis, windLeanAngle) * rotateY(randomAngle);
 
   vec3 grassFaceNormal = vec3(0.0, 0.0, 1.0);
   grassFaceNormal = grassMat * grassFaceNormal;
@@ -145,14 +186,15 @@ void main() {
 
   grassVertexPosition += grassOffset;
 
-  vec3 b1 = vec3(0.02, 0.075, 0.01);
-  vec3 b2 = vec3(0.025, 0.1, 0.01);
-  vec3 t1 = vec3(0.65, 0.8, 0.25);
-  vec3 t2 = vec3(0.8, 0.9, 0.4);
+  // Richer, more saturated greens
+  vec3 b1 = vec3(0.03, 0.11, 0.02);
+  vec3 b2 = vec3(0.04, 0.14, 0.03);
+  vec3 t1 = vec3(0.50, 0.85, 0.28);
+  vec3 t2 = vec3(0.65, 0.95, 0.45);
 
   vec3 baseColour = mix(b1, b2, hashGrassColour.x);
   vec3 tipColour = mix(t1, t2, hashGrassColour.y);
-  vec3 highLODColour = mix(baseColour, tipColour, easeIn(heightPercent, 4.0)) * randomShade;
+  vec3 highLODColour = mix(baseColour, tipColour, easeIn(heightPercent, 4.0)) * (randomShade * 1.05 + 0.05);
   vec3 lowLODColour = mix(b1, t1, heightPercent);
   vGrassColour = mix(highLODColour, lowLODColour, highLODOut);
   vGrassParams = vec4(heightPercent, grassBladeWorldPos.y, highLODOut, xSide);

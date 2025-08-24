@@ -2,12 +2,14 @@ import { defineConfig } from 'vite';
 import wasm from 'vite-plugin-wasm';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import solidPlugin from 'vite-plugin-solid';
+import { resolve } from 'node:path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [wasm(), topLevelAwait(), solidPlugin()],
     resolve: {
         alias: {
+            '@me_imgs': resolve(__dirname, 'me_imgs'),
         },
     },
     build: {
@@ -19,5 +21,5 @@ export default defineConfig({
             clientPort: 5200,
         }
     },
-    base: "/Quick_Grass/"
+    base: "/liam-elia/"
 });

@@ -27,20 +27,23 @@ export const third_person_camera = (() => {
     }
 
     CalculateIdealOffset_() {
-      const idealOffset = new THREE.Vector3(0, 0.5, -8);
-      // idealOffset.multiplyScalar(10.0);
-      idealOffset.applyQuaternion(this.Parent.Quaternion);
-      idealOffset.add(this.Parent.Position);
+      // Angled top-down view (~70 degrees from horizontal)
+      const height = 30;               // vertical height above player
+      const tiltDegrees = 60;          // angle from horizontal
+      const tiltRadians = THREE.MathUtils.degToRad(tiltDegrees);
+      const horizontalDistance = height / Math.tan(tiltRadians);
 
-      // idealOffset.y = Math.min(idealOffset.y, height + 1.5);
-      // idealOffset.y += (this.Parent.Position.y - 1.5 + height);
+      // Fixed world-space azimuth (looking from -Z towards +Z)
+      const idealOffset = new THREE.Vector3(0, height, -horizontalDistance);
+      // Keep independent of player rotation; do not apply Parent.Quaternion
+      idealOffset.add(this.Parent.Position);
 
       return idealOffset;
     }
 
     CalculateIdealLookat_() {
-      const idealLookat = new THREE.Vector3(0, 1.25, 4);
-      idealLookat.applyQuaternion(this.Parent.Quaternion);
+      // Look at the player position (slightly above to reduce horizon clipping)
+      const idealLookat = new THREE.Vector3(0, 1.0, 0);
       idealLookat.add(this.Parent.Position);
       return idealLookat;
     }
@@ -57,7 +60,8 @@ export const third_person_camera = (() => {
         const idealLookat = this.CalculateIdealLookat_();
   
         const height = terrainComponent.GetHeight(idealOffset.x, idealOffset.z);
-        idealOffset.y = height + 4.25;
+        // For bird's eye view, maintain higher altitude above terrain
+        idealOffset.y = Math.max(idealOffset.y, height + 20);
 
         // const t = 0.05;
         // const t = 4.0 * timeElapsed;

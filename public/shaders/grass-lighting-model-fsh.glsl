@@ -35,6 +35,8 @@ varying vec3 vNormal2;
 varying vec3 vWorldPosition;
 
 varying vec3 vViewPosition;
+varying float vMaskRaw;
+varying float vMaskCut;
 struct BlinnPhongMaterial {
 	vec3 diffuseColor;
 	vec3 specularColor;
@@ -94,12 +96,38 @@ void main() {
 	// Density is in the range [0, 1]
 	// 0 being no grass
 	// 1 being full grass
-	float aoForDensity = mix(1.0, 0.25, density);
+  // Make dense fields less dark to avoid a grey/flat look
+  float aoForDensity = mix(1.0, 0.70, density);
   float ao = mix(aoForDensity, 1.0, easeIn(heightPercent, 2.0));
 
-  diffuseColor.rgb *= vGrassColour;
+  // Grassy fill inside letters: much darker green for strong contrast
+  vec3 baseCol = vGrassColour;
+  vec3 darkGreenTarget = vec3(0.08, 0.18, 0.06); // much darker, almost forest green
+  baseCol = mix(baseCol, darkGreenTarget, vMaskCut * 0.85); // stronger dark blend
+
+  // Edge treatment: very dark edge definition for sharp contrast
+  float edgeInnerBright = smoothstep(0.495, 0.50, vMaskRaw) * (1.0 - smoothstep(0.50, 0.505, vMaskRaw));
+  float edgeOuterDark  = smoothstep(0.50, 0.54, vMaskRaw) * (1.0 - smoothstep(0.54, 0.575, vMaskRaw));
+  vec3 edgeTint = vec3(0.05, 0.15, 0.04); // very dark green edge tint
+  vec3 colorAdjusted = baseCol;
+  colorAdjusted += edgeInnerBright * 0.15 * edgeTint;   // minimal inner brightening
+  colorAdjusted *= (1.0 - 0.25 * edgeOuterDark);        // stronger outer darkening
+  diffuseColor.rgb *= colorAdjusted;
 	diffuseColor.rgb *= mix(0.85, 1.0, grassMiddle);
+  // Moderate AO adjustment for darker green areas
+  ao = mix(ao, min(1.1, ao * 1.1), vMaskCut * 0.6); // slight brightening for readability
   diffuseColor.rgb *= ao;
+
+  // Enhanced green saturation for natural grass look
+  // Boost green channel for more vibrant grass
+  diffuseColor.rgb *= vec3(0.95, 1.15, 0.90);
+  
+  // Contrast adjustment for better definition
+  diffuseColor.rgb = pow(diffuseColor.rgb, vec3(0.94));
+  
+  // Subtle warm tint for sunset mood
+  vec3 warmTint = diffuseColor.rgb * vec3(1.01, 1.005, 0.99);
+  diffuseColor.rgb = mix(diffuseColor.rgb, warmTint, 0.12);
 
 
 	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );

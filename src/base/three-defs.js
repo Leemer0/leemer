@@ -8,6 +8,7 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 
 import {GammaCorrectionShader} from 'three/addons/shaders/GammaCorrectionShader.js';
 import {ACESFilmicToneMappingShader} from 'three/addons/shaders/ACESFilmicToneMappingShader.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import {FXAAShader} from 'three/addons/shaders/FXAAShader.js';
 
 import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
@@ -32,4 +33,5 @@ export {
   RenderPass, FXAAShader, UnrealBloomPass,
   FBXLoader, GLTFLoader, SkeletonUtils, BufferGeometryUtils,
   CSM, CSMShader,
+  RGBELoader,
 };

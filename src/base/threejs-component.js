@@ -1,17 +1,18 @@
 import { THREE, RenderPass, ShaderPass, FXAAShader, ACESFilmicToneMappingShader } from './three-defs.js';
 
-import Stats from 'three/examples/jsm/libs/stats.module.js';
+// Removed FPS stats
 
 import * as entity from "./entity.js";
 import * as light_component from './render/light-component.js';
 import * as shaders from '../game/render/shaders.js';
 
 
-const HEMI_UP = new THREE.Color().setHex(0x7CBFFF, THREE.SRGBColorSpace);
-const HEMI_DOWN = new THREE.Color().setHex(0xE5BCFF, THREE.SRGBColorSpace);
-const HEMI_INTENSITY = 0.25;
-const LIGHT_INTENSITY = 0.7;
-const LIGHT_COLOUR = new THREE.Color().setRGB(0.52, 0.66, 0.99, THREE.SRGBColorSpace);
+// Enhanced vibrant daytime lighting with sunset warmth
+const HEMI_UP = new THREE.Color().setRGB(0.92, 0.98, 1.08, THREE.SRGBColorSpace);   // brighter sky tint with pink
+const HEMI_DOWN = new THREE.Color().setRGB(0.95, 0.92, 0.88, THREE.SRGBColorSpace); // warmer ground bounce
+const HEMI_INTENSITY = 0.45; // increased ambient light
+const LIGHT_INTENSITY = 1.25; // much brighter sun
+const LIGHT_COLOUR = new THREE.Color().setRGB(1.08, 1.02, 0.95, THREE.SRGBColorSpace); // warmer, brighter white
 const LIGHT_FAR = 1000.0;
 
 
@@ -256,11 +257,11 @@ export const threejs_component = (() => {
           -1, 1, 1, -1, 1, 1000);
       this.uiScene_ = new THREE.Scene();
   
-      this.#opaqueScene_.fog = new THREE.FogExp2(0xDFE9F3, 0.0001);
-      this.#opaqueScene_.fog.color.setRGB(0.45, 0.8, 1.0, THREE.SRGBColorSpace);
+      this.#opaqueScene_.fog = new THREE.FogExp2(0xCFE8FF, 0.00009);
+      this.#opaqueScene_.fog.color.setRGB(0.80, 0.90, 1.00, THREE.SRGBColorSpace);
 
       let light = new THREE.DirectionalLight(0xFFFFFF, LIGHT_INTENSITY);
-      light.position.set(-20, 20, 20);
+      light.position.set(-30, 12, 20);
       light.target.position.set(0, 0, 0);
       light.color.copy(LIGHT_COLOUR);
 
@@ -372,11 +373,7 @@ export const threejs_component = (() => {
       hemiLight.SetActive(false);
       hemiLight.Init(this.Parent);
 
-      this.stats_ = new Stats();
-      this.grassStats_ = new Stats.Panel('Grass MS', '#0f0', '#020');
-      this.stats_.addPanel(this.grassStats_);
-      this.stats_.showPanel(0);
-      document.body.appendChild(this.stats_.dom);
+      // Removed FPS stats panel setup
 
       this.onWindowResize_();
     }
@@ -458,7 +455,7 @@ export const threejs_component = (() => {
       this.#transparentCamera_.position.copy(this.#opaqueCamera_.position);
       this.#transparentCamera_.quaternion.copy(this.#opaqueCamera_.quaternion);
       
-      this.stats_.begin();
+      // Removed stats begin
 
       this.#threejs_.autoClear = true;
       this.#threejs_.autoClearColor = true;
@@ -501,7 +498,7 @@ export const threejs_component = (() => {
       this.#gammaPass_.renderToScreen = true;
       this.#gammaPass_.render(this.#threejs_, null, this.readBuffer_, timeElapsedS, false);
 
-      this.stats_.end();
+      // Removed stats end
     }
 
     Update(timeElapsed) {
@@ -514,7 +511,8 @@ export const threejs_component = (() => {
       this.#csm_.update();
   
       this.sun_.position.copy(pos);
-      this.sun_.position.add(new THREE.Vector3(-10, 40, 10));
+      // lower, warmer sun angle for sunset
+      this.sun_.position.add(new THREE.Vector3(-15, 12, 12));
       this.sun_.target.position.copy(pos);
       this.sun_.updateMatrixWorld();
       this.sun_.target.updateMatrixWorld();
