@@ -478,14 +478,34 @@ export const threejs_component = (() => {
       this.#threejs_.autoClearStencil = false;
       this.swapBuffers_();
 
-      this.#waterTexturePass_.clear = false;
-      this.#waterTexturePass_.renderToScreen = false;
-      this.#waterTexturePass_.material.uniforms.colourTexture.value = this.writeBuffer_.texture;
-      this.#waterTexturePass_.material.uniforms.depthTexture.value = this.writeBuffer_.depthTexture;
-      this.#waterTexturePass_.render(this.#threejs_, this.waterBuffer_, null, timeElapsedS, false);
+      // Only render water passes if any water geometry intersects the camera frustum
+      let hasVisibleWater = false;
+      try {
+        const projView = new THREE.Matrix4().multiplyMatrices(this.#opaqueCamera_.projectionMatrix, this.#opaqueCamera_.matrixWorldInverse);
+        const frustum = new THREE.Frustum().setFromProjectionMatrix(projView);
+        this.#waterScene_.traverse((obj) => {
+          if (hasVisibleWater || !obj.visible || !obj.isMesh || !obj.geometry) return;
+          const bs = obj.geometry.boundingSphere;
+          if (bs) {
+            const worldCenter = bs.center.clone().applyMatrix4(obj.matrixWorld);
+            const worldRadius = bs.radius * obj.matrixWorld.getMaxScaleOnAxis();
+            if (frustum.intersectsSphere(new THREE.Sphere(worldCenter, worldRadius))) {
+              hasVisibleWater = true;
+            }
+          }
+        });
+      } catch (_) {}
 
-      this.#waterPass_.clear = false;
-      this.#waterPass_.render(this.#threejs_, this.null, this.writeBuffer_, timeElapsedS, false);
+      if (hasVisibleWater) {
+        this.#waterTexturePass_.clear = false;
+        this.#waterTexturePass_.renderToScreen = false;
+        this.#waterTexturePass_.material.uniforms.colourTexture.value = this.writeBuffer_.texture;
+        this.#waterTexturePass_.material.uniforms.depthTexture.value = this.writeBuffer_.depthTexture;
+        this.#waterTexturePass_.render(this.#threejs_, this.waterBuffer_, null, timeElapsedS, false);
+
+        this.#waterPass_.clear = false;
+        this.#waterPass_.render(this.#threejs_, this.null, this.writeBuffer_, timeElapsedS, false);
+      }
 
       this.#transparentPass_.renderToScreen = false;
       this.#transparentPass_.clear = false;

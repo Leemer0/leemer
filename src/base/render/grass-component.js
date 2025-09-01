@@ -565,11 +565,11 @@ export class GrassComponent extends entity.Component {
     // Compute current cut transform aligned to camera (reuse for click mapping)
 
     // Helper to sample cut mask (0..1) at world XZ
+    const cr = Math.cos(cutRotation);
+    const sr = Math.sin(cutRotation);
     const sampleCutMask = (wx, wz) => {
       const dx = wx - cutOffset.x;
       const dz = wz - cutOffset.y;
-      const cr = Math.cos(cutRotation);
-      const sr = Math.sin(cutRotation);
       const rx = cr * dx - sr * dz;
       const rz = sr * dx + cr * dz;
       const u = rx / cutScale.x + 0.5;

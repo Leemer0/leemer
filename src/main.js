@@ -83,6 +83,8 @@ class QuickFPS1 {
       });
       projectsBtn.addEventListener('mouseenter', () => this.cursorEl_?.classList.add('on-button'));
       projectsBtn.addEventListener('mouseleave', () => this.cursorEl_?.classList.remove('on-button'));
+      projectsBtn.addEventListener('touchstart', () => this.cursorEl_?.classList.add('on-button'), {passive: true});
+      projectsBtn.addEventListener('touchend', () => this.cursorEl_?.classList.remove('on-button'));
     }
 
     if (linkedinBtn) {
@@ -95,6 +97,8 @@ class QuickFPS1 {
       });
       linkedinBtn.addEventListener('mouseenter', () => this.cursorEl_?.classList.add('on-button'));
       linkedinBtn.addEventListener('mouseleave', () => this.cursorEl_?.classList.remove('on-button'));
+      linkedinBtn.addEventListener('touchstart', () => this.cursorEl_?.classList.add('on-button'), {passive: true});
+      linkedinBtn.addEventListener('touchend', () => this.cursorEl_?.classList.remove('on-button'));
     }
 
     // Start positioning the buttons within the grass frame
@@ -189,7 +193,8 @@ class QuickFPS1 {
       const linkedinScreen = convertUVToScreen(linkedinCenter);
 
       // Nudge buttons to sit centered within the grass box (eyeballed)
-      const downwardOffset = 260; // push further down into the box
+      const isMobile = matchMedia('(max-width: 640px)').matches;
+      const downwardOffset = isMobile ? 220 : 260; // push further down into the box
       const horizontalAdjust = -4; // tiny horizontal tweak for visual centering
 
       // Force the positioning with !important styles
