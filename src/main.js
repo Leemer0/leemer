@@ -459,9 +459,10 @@ class QuickFPS1 {
         meta: 'Python • Data Pipeline',
         images: [straitChokepoint, chart1],
         desc: `
-          <p>Real-time monitoring of oil tanker traffic through the world's most critical chokepoint (~20% of global oil).</p>
-          <p><b>Skills:</b> Python, AIS data parsing, API integration, time-series correlation.</p>
-          <p><b>Tools:</b> MarineTraffic AIS API, ICE Brent price feeds, pandas.</p>
+          <p>Built a Python bot that counts oil tanker traffic passing through a geo-fence in the Strait of Hormuz—the world's most critical chokepoint (~20% of global oil).</p>
+          <p><b>AIS:</b> Automatic Identification System, GPS tracking for ships.</p>
+          <p><b>What it does:</b> Tracks vessel crossings, logs shipment data, and correlates traffic patterns with crude oil price movements.</p>
+          <p><b>Tools:</b> Python, MarineTraffic AIS API, ICE Brent price feeds, pandas.</p>
         `
       },
       // Market Intel
