@@ -6,6 +6,7 @@ import * as entity from "../entity.js";
 
 import * as terrain_component from './terrain-component.js';
 import * as math from '../math.js';
+import { qualityManager } from '../quality-settings.js';
 
 
 
@@ -23,14 +24,16 @@ const M_TMP = new THREE.Matrix4();
 const S_TMP = new THREE.Sphere();
 const AABB_TMP = new THREE.Box3();
 
-
-const NUM_GRASS = (32 * 32) * 3;
-const GRASS_SEGMENTS_LOW = 1;
-const GRASS_SEGMENTS_HIGH = 6;
+// Quality-dependent grass settings
+const NUM_GRASS = qualityManager.get('grassInstanceCount');
+const GRASS_SEGMENTS_LOW = qualityManager.get('grassSegmentsLow');
+const GRASS_SEGMENTS_HIGH = qualityManager.get('grassSegmentsHigh');
 const GRASS_VERTICES_LOW = (GRASS_SEGMENTS_LOW + 1) * 2;
 const GRASS_VERTICES_HIGH = (GRASS_SEGMENTS_HIGH + 1) * 2;
-const GRASS_LOD_DIST = 15;
-const GRASS_MAX_DIST = 150;
+const GRASS_LOD_DIST = qualityManager.get('grassLodDist');
+const GRASS_MAX_DIST = qualityManager.get('grassMaxDist');
+const GRASS_MESH_POOL_CAP = qualityManager.get('grassMeshPoolCap');
+const GRASS_EXTRA_PASSES = qualityManager.get('grassExtraPasses');
 
 const GRASS_PATCH_SIZE = 5 * 2;
 
@@ -107,14 +110,32 @@ export class GrassComponent extends entity.Component {
   }
 
   Destroy() {
+    // Properly dispose of all resources to prevent memory leaks
     for (let m of this.#meshesLow_) {
       m.removeFromParent();
     }
     for (let m of this.#meshesHigh_) {
       m.removeFromParent();
     }
-    this.#group_.removeFromParent();
+    this.#meshesLow_.length = 0;
+    this.#meshesHigh_.length = 0;
 
+    // Dispose geometries
+    this.#geometryLow_?.dispose();
+    this.#geometryHigh_?.dispose();
+    this.#geometryLowExtra_?.dispose();
+    this.#geometryHighExtra_?.dispose();
+    this.#geometryLowExtra2_?.dispose();
+    this.#geometryHighExtra2_?.dispose();
+
+    // Dispose materials
+    this.#grassMaterialLow_?.dispose();
+    this.#grassMaterialHigh_?.dispose();
+
+    // Dispose cut mask texture
+    this.#cutMaskTexture_?.dispose();
+
+    this.#group_.removeFromParent();
   }
 
   #CreateGeometry_(segments, seed = 0) {
@@ -431,8 +452,8 @@ export class GrassComponent extends entity.Component {
 
   #CreateMesh_(distToCell, extra = false) {
     const meshes = distToCell > GRASS_LOD_DIST ? this.#meshesLow_ : this.#meshesHigh_;
-    if (meshes.length > 1000) {
-      console.log('crap')
+    // Cap mesh pool to prevent memory issues
+    if (meshes.length >= GRASS_MESH_POOL_CAP) {
       return null;
     }
 
@@ -608,16 +629,21 @@ export class GrassComponent extends entity.Component {
 
         if (distToCell > GRASS_LOD_DIST) {
           const m = meshesLow.length > 0 ? meshesLow.pop() : this.#CreateMesh_(distToCell);
-          m.position.copy(currentCell);
-          m.position.y = 0;
-          m.visible = true;
-          totalVerts += GRASS_VERTICES_LOW;
-          if (insideMask) {
-            const m2 = meshesLow.length > 0 ? meshesLow.pop() : this.#CreateMesh_(distToCell, true);
-            m2.position.copy(currentCell);
-            m2.position.y = 0;
-            m2.visible = true;
+          if (m) {
+            m.position.copy(currentCell);
+            m.position.y = 0;
+            m.visible = true;
             totalVerts += GRASS_VERTICES_LOW;
+          }
+          // Extra passes for density inside mask (quality-dependent)
+          if (insideMask && GRASS_EXTRA_PASSES) {
+            const m2 = meshesLow.length > 0 ? meshesLow.pop() : this.#CreateMesh_(distToCell, true);
+            if (m2) {
+              m2.position.copy(currentCell);
+              m2.position.y = 0;
+              m2.visible = true;
+              totalVerts += GRASS_VERTICES_LOW;
+            }
             // Third pass for 3x density inside mask
             const m3 = meshesLow.length > 0 ? meshesLow.pop() : this.#CreateMesh_(distToCell, true);
             if (m3) {
@@ -630,16 +656,21 @@ export class GrassComponent extends entity.Component {
           }
         } else {
           const m = meshesHigh.length > 0 ? meshesHigh.pop() : this.#CreateMesh_(distToCell);
-          m.position.copy(currentCell);
-          m.position.y = 0;
-          m.visible = true;
-          totalVerts += GRASS_VERTICES_HIGH;
-          if (insideMask) {
-            const m2 = meshesHigh.length > 0 ? meshesHigh.pop() : this.#CreateMesh_(distToCell, true);
-            m2.position.copy(currentCell);
-            m2.position.y = 0;
-            m2.visible = true;
+          if (m) {
+            m.position.copy(currentCell);
+            m.position.y = 0;
+            m.visible = true;
             totalVerts += GRASS_VERTICES_HIGH;
+          }
+          // Extra passes for density inside mask (quality-dependent)
+          if (insideMask && GRASS_EXTRA_PASSES) {
+            const m2 = meshesHigh.length > 0 ? meshesHigh.pop() : this.#CreateMesh_(distToCell, true);
+            if (m2) {
+              m2.position.copy(currentCell);
+              m2.position.y = 0;
+              m2.visible = true;
+              totalVerts += GRASS_VERTICES_HIGH;
+            }
             // Third pass for 3x density inside mask
             const m3 = meshesHigh.length > 0 ? meshesHigh.pop() : this.#CreateMesh_(distToCell, true);
             if (m3) {

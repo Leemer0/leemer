@@ -5,6 +5,7 @@ import { THREE, RenderPass, ShaderPass, FXAAShader, ACESFilmicToneMappingShader 
 import * as entity from "./entity.js";
 import * as light_component from './render/light-component.js';
 import * as shaders from '../game/render/shaders.js';
+import { qualityManager } from './quality-settings.js';
 
 
 // Enhanced vibrant daytime lighting with sunset warmth
@@ -267,11 +268,12 @@ export const threejs_component = (() => {
 
       this.#csm_ = new FakeCSM();
 
-      // VIDEO HACK
-      light.castShadow = true;
+      // VIDEO HACK - shadow map size now quality-dependent
+      const shadowMapSize = qualityManager.get('shadowMapSize');
+      light.castShadow = qualityManager.get('shadowsEnabled');
       light.shadow.bias = -0.001;
-      light.shadow.mapSize.width = 4096;
-      light.shadow.mapSize.height = 4096;
+      light.shadow.mapSize.width = shadowMapSize;
+      light.shadow.mapSize.height = shadowMapSize;
       light.shadow.camera.near = 1.0;
       light.shadow.camera.far = 100.0;
       light.shadow.camera.left = 32;
@@ -395,7 +397,10 @@ export const threejs_component = (() => {
     }
 
     getMaxAnisotropy() {
-      return this.#threejs_.capabilities.getMaxAnisotropy();
+      // Cap anisotropy based on quality tier
+      const hardwareMax = this.#threejs_.capabilities.getMaxAnisotropy();
+      const qualityMax = qualityManager.get('maxAnisotropy');
+      return Math.min(hardwareMax, qualityMax);
     }
 
     onWindowResize_() {

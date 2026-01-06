@@ -59,18 +59,25 @@ html, body {
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 0 10px rgba(255, 180, 120, 0.6), 0 0 2px rgba(255, 255, 255, 0.9) inset;
-  backdrop-filter: blur(1px);
-  transition: width 0.12s ease, height 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
-  z-index: 9999;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 0 12px rgba(255, 200, 150, 0.7),
+    0 0 24px rgba(255, 180, 120, 0.4),
+    inset 0 0 4px rgba(255, 255, 255, 0.3);
+  transition: width 0.15s ease, height 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  z-index: 10000;
 }
 
 .custom-cursor.active {
   width: 20px;
   height: 20px;
   border-color: rgba(255, 220, 180, 1.0);
-  box-shadow: 0 0 14px rgba(255, 200, 150, 0.9), 0 0 3px rgba(255, 255, 255, 1.0) inset;
+  background: rgba(255, 220, 180, 0.15);
+  box-shadow:
+    0 0 16px rgba(255, 200, 150, 0.9),
+    0 0 32px rgba(255, 180, 120, 0.5),
+    inset 0 0 6px rgba(255, 255, 255, 0.5);
 }
 
 body {
@@ -266,218 +273,324 @@ canvas#canvas, #threejs-canvas, .threejs-canvas { pointer-events: auto; }
 
 /* Cursor reaction on buttons */
 .custom-cursor.on-button {
-  width: 30px;
-  height: 30px;
-  border-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0 18px rgba(190, 230, 255, 0.9), 0 0 3px rgba(255, 255, 255, 0.95) inset;
+  width: 32px;
+  height: 32px;
+  border-color: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 20px rgba(200, 230, 255, 0.9),
+    0 0 40px rgba(180, 220, 255, 0.5),
+    inset 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
 /* ===================== Projects Overlay ===================== */
-.projects-open #linkedin-btn {
-  opacity: 0;
-  pointer-events: none;
-}
-
+.projects-open #linkedin-btn,
 .projects-open #projects-btn {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
 }
 
-/* Full-screen overlay for projects */
 .projects-overlay {
   position: fixed;
   inset: 0;
   z-index: 200;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.22s ease, transform 0.22s ease;
-  transform: scale(0.98);
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  transition: opacity 0.25s ease;
+  background:
+    linear-gradient(135deg, rgba(20, 28, 22, 0.92) 0%, rgba(12, 16, 14, 0.96) 100%);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  color: rgba(255,255,255,0.9);
 }
+
 .projects-open .projects-overlay {
   opacity: 1;
   pointer-events: auto;
-  transform: scale(1);
+}
+
+/* Ensure cursor is visible in overlay */
+.projects-overlay,
+.projects-overlay * {
+  cursor: none;
+}
+
+/* Header */
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
 }
 
 .projects-title {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,0.92);
-  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 18px;
-  letter-spacing: 1.2px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
 }
 
-.projects-content {
-  position: absolute;
-  top: 64px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 20px 24px;
-  overflow: hidden;
-  pointer-events: auto;
-  color: rgba(255,255,255,0.9);
-  display: flex;
-  gap: 16px;
-}
-
-/* Close control sits at top-right of the full overlay (inside #projects-btn) */
 .projects-close {
-  position: absolute;
-  top: 12px;
-  right: 14px;
   width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(18,18,22,0.3);
-  border: 1px solid rgba(255,255,255,0.25);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 8px;
-  color: rgba(255,255,255,0.92);
-  font-size: 18px;
-  line-height: 1;
-  pointer-events: auto;
+  color: rgba(255,255,255,0.6);
+  font-size: 20px;
   cursor: none;
-  z-index: 10;
-  backdrop-filter: blur(8px) saturate(140%);
-  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  transition: all 0.2s ease;
 }
 .projects-close:hover {
-  border-color: rgba(255,255,255,0.3);
+  background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+  transform: scale(1.05);
 }
 
-/* Projects split layout */
-.projects-left, .projects-right { background: transparent; border: none; border-radius: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
-.projects-left { flex: 3 1 75%; min-width: 320px; position: relative; overflow: hidden; }
-.projects-right { flex: 1 1 25%; min-width: 260px; padding: 8px 8px 8px 8px; overflow: auto; }
-.projects-right h3 {
-  margin: 0 0 12px 0;
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--mil-primary);
-}
-.project-list {
-  list-style: none;
-  margin: 0; padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  border-left: 1px dashed rgba(255,255,255,0.18);
-  padding-left: 10px;
-}
-.project-item a {
-  display: block;
-  padding: 10px 8px;
-  border: none;
-  border-radius: 8px;
-  color: rgba(220, 245, 220, 0.92);
-  text-decoration: none;
-  background: transparent;
-  transition: color 0.15s ease, background 0.15s ease, transform 0.15s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: none; /* prevent default hand cursor, use custom circle instead */
-}
-.project-item a:hover { background: rgba(255,255,255,0.06); color: var(--mil-primary); transform: translateX(2px); }
-
-.project-item a .idx {
-  color: rgba(255,255,255,0.45);
-  margin-right: 10px;
-}
-.project-item a .arrow {
-  float: right;
-  color: rgba(255,255,255,0.45);
-}
-.projects-globe-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Option to pin the particle globe to the top-left within its container */
-.projects-globe-canvas.top-left {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 260px;
-  height: 260px;
-}
-
-/* Project detail panel in the blank area, avoids the top-left particle globe */
-.project-detail {
-  position: absolute;
-  top: 24px;
-  left: 300px; /* leave room for the particle globe */
-  right: 24px;
-  bottom: 24px;
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.10);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  overflow: hidden;
-  pointer-events: auto;
-}
-.project-detail .pd-header {
+/* Content layout */
+.projects-content {
   display: flex;
-  align-items: baseline;
+  height: calc(100vh - 77px);
+  overflow: hidden;
+}
+
+/* Navigation */
+.projects-nav {
+  width: 220px;
+  min-width: 220px;
+  padding: 20px 16px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.project-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: rgba(255,255,255,0.55);
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: none;
+  transition: all 0.2s ease;
+}
+
+.project-btn:hover {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border-color: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+  transform: translateX(4px);
+}
+
+.project-btn.active {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+  border-color: rgba(255,255,255,0.12);
+  color: #fff;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.project-title {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.project-tag {
+  font-size: 9px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 3px 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+}
+
+.project-btn.active .project-tag {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
+}
+
+/* Main content */
+.projects-main {
+  flex: 1;
+  padding: 28px 36px;
+  overflow-y: auto;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%);
+}
+
+.projects-main h2 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.detail-meta {
+  display: inline-block;
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+}
+
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.detail-media {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  padding: 14px 16px 8px 16px;
-  color: rgba(240,245,250,0.95);
-  font-family: "IBM Plex Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-.project-detail .pd-header h4 { margin: 0; font-size: 14px; letter-spacing: 1.2px; text-transform: uppercase; }
-.project-detail .pd-header h4.small { font-size: 12px; letter-spacing: 1.1px; }
-.project-detail .pd-header .meta { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 1px; }
-.project-detail .pd-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; padding: 0 16px 16px 16px; height: calc(100% - 50px); }
-.project-detail .pd-desc { font-size: 12px; line-height: 1.6; color: rgba(230,240,235,0.9); overflow: auto; }
-.project-detail .pd-desc p { margin: 0 0 8px 0; }
-.project-detail .pd-desc ul { margin: 8px 0 12px 0; padding-left: 16px; }
-.project-detail .pd-desc li { margin: 6px 0; }
-.project-detail .pd-desc .note { font-size: 11px; color: rgba(200,230,255,0.75); }
-.project-detail .pd-media { border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: auto; background: rgba(255,255,255,0.04); }
-.project-detail .pd-media.multi { display: grid; grid-template-rows: auto auto; gap: 8px; padding: 6px; }
-.project-detail .pd-media.multi img.logo { max-height: 72px; width: auto; margin: 0 auto; }
-.project-detail .pd-media.multi img.screenshot { width: 100%; height: auto; border-radius: 6px; }
-.project-detail .pd-media video.demo { width: 100%; height: auto; display: block; border: 0; border-radius: 6px; background: #000; }
-.project-detail .pd-media iframe { width: 100%; height: 100%; display: block; border: 0; background: rgba(12,16,32,0.6); }
-.project-detail .pd-media img { width: 100%; height: auto; display: block; border: 0; object-fit: contain; background: transparent; }
-
-/* Soulbeam waitlist */
-.project-detail .pd-desc .waitlist { display: flex; gap: 8px; margin: 10px 0 14px 0; }
-.project-detail .pd-desc .waitlist input[type="email"] {
-  flex: 1 1 auto; min-width: 0; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.22);
-  background: rgba(15,15,20,0.35); color: rgba(240,245,250,0.95);
-}
-.project-detail .pd-desc .waitlist button {
-  padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.28);
-  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06)); color: rgba(245,250,255,0.95);
-  cursor: none; letter-spacing: 0.6px;
+  max-height: calc(100vh - 240px);
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
 }
 
-/* Removed top-left always-on globe */
+.detail-media::-webkit-scrollbar {
+  width: 6px;
+}
 
+.detail-media::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+}
+
+.detail-media::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+}
+
+.detail-media::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.detail-media img,
+.detail-media video {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.detail-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.75);
+}
+
+.detail-text p {
+  margin: 0 0 16px 0;
+}
+
+.detail-text p:first-child {
+  font-size: 15px;
+  color: rgba(255,255,255,0.9);
+}
+
+.detail-text p:last-child {
+  margin-bottom: 0;
+}
+
+.detail-text b {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Hide scrollbars but keep functionality */
+.projects-main,
+.projects-nav {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.projects-main::-webkit-scrollbar,
+.projects-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile */
 @media (max-width: 900px) {
+  .projects-header {
+    padding: 14px 16px;
+  }
+
+  .projects-nav {
+    width: 100%;
+    min-width: unset;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 10px 12px;
+    gap: 6px;
+    background: transparent;
+  }
+
+  .project-btn {
+    padding: 8px 12px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .project-btn:hover {
+    transform: none;
+  }
+
+  .project-tag {
+    display: none;
+  }
+
   .projects-content {
     flex-direction: column;
-    overflow: auto;
+    height: calc(100vh - 57px);
   }
-  .projects-right {
-    max-height: 45vh;
+
+  .projects-main {
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .projects-main h2 {
+    font-size: 18px;
+  }
+
+  .detail-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .detail-media {
+    max-height: none;
+  }
+
+  .detail-text {
+    font-size: 13px;
+    line-height: 1.7;
   }
 }
