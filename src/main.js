@@ -31,26 +31,160 @@ import marketIntel2 from '@me_imgs/MarketIntel-2.png';
 import marketIntel3 from '@me_imgs/MarketIntel-3.png';
 import marketIntel4 from '@me_imgs/MarketIntel-4.png';
 import marketIntel5 from '@me_imgs/MarketIntel-5.png';
+import oldPortfolioVideo from '@me_imgs/old_portfolio.mp4';
 
 class QuickFPS1 {
   constructor() {
+    this.is3DMode_ = false;
   }
 
   async Init() {
-    await shaders.loadShaders();
-    // Ensure custom fonts are loaded before we create any canvas-based masks
-    if (document && document.fonts && document.fonts.ready) {
-      try {
-        await document.fonts.ready;
-      } catch (_) {}
+    // Show static landing page first
+    this.ShowStaticLanding_();
+
+    // Setup custom cursor for static mode too
+    this.cursorEl_ = document.createElement('div');
+    this.cursorEl_.className = 'custom-cursor';
+    document.body.appendChild(this.cursorEl_);
+
+    this.cursorPos_ = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    this.cursorTarget_ = { x: this.cursorPos_.x, y: this.cursorPos_.y };
+    this.cursorSmooth_ = 0.15;
+
+    window.addEventListener('mousemove', (e) => {
+      this.cursorTarget_.x = e.clientX;
+      this.cursorTarget_.y = e.clientY;
+    }, false);
+
+    // Start cursor animation loop (lightweight)
+    this.AnimateCursor_();
+  }
+
+  ShowStaticLanding_() {
+    const container = document.getElementById('container');
+    container.innerHTML = `
+      <div class="static-landing">
+        <div class="grid-overlay"></div>
+
+        <!-- Corner markers -->
+        <span class="corner-mark tl">◈</span>
+        <span class="corner-mark tr">◈</span>
+        <span class="corner-mark bl">◈</span>
+        <span class="corner-mark br">◈</span>
+
+        <!-- Top labels -->
+        <div class="top-labels">
+          <span class="label-text">PORTFOLIO</span>
+          <span class="label-text">◇</span>
+          <span class="label-text">2025</span>
+        </div>
+
+        <!-- Main content -->
+        <div class="static-content">
+          <div class="title-container">
+            <span class="glyph-left">⟨</span>
+            <h1 class="static-name">Liam Elia</h1>
+            <span class="glyph-right">⟩</span>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="static-nav">
+          <button class="nav-item" id="static-projects-btn">
+            <span class="nav-marker">○</span>
+            <span class="nav-text">PROJECTS</span>
+          </button>
+          <a class="nav-item" href="https://www.linkedin.com/in/liam-elia" target="_blank" rel="noopener">
+            <span class="nav-marker">○</span>
+            <span class="nav-text">LINKEDIN</span>
+          </a>
+        </div>
+
+        <!-- Bottom labels -->
+        <div class="bottom-labels">
+          <span class="label-text">TORONTO</span>
+        </div>
+
+        <!-- 3D Toggle -->
+        <div class="toggle-3d-container">
+          <video class="toggle-3d-video" src="${oldPortfolioVideo}" autoplay muted loop playsinline></video>
+          <button class="toggle-3d-btn" id="toggle-3d-btn">
+            <span class="toggle-3d-text">ENTER 3D MODE</span>
+          </button>
+          <span class="toggle-3d-warning">◁ PERFORMANCE WARNING ▷</span>
+        </div>
+
+        <!-- Side text -->
+        <span class="side-text left">SYSTEMS · DESIGN · CODE</span>
+        <span class="side-text right">EST. MMXXV</span>
+      </div>
+    `;
+
+    // Setup static button handlers
+    const projectsBtn = document.getElementById('static-projects-btn');
+    const toggle3dBtn = document.getElementById('toggle-3d-btn');
+
+    projectsBtn?.addEventListener('click', () => this.OpenProjectsOverlay_());
+    projectsBtn?.addEventListener('mouseenter', () => this.cursorEl_?.classList.add('on-button'));
+    projectsBtn?.addEventListener('mouseleave', () => this.cursorEl_?.classList.remove('on-button'));
+
+    toggle3dBtn?.addEventListener('click', () => this.Enable3DMode_());
+    toggle3dBtn?.addEventListener('mouseenter', () => this.cursorEl_?.classList.add('on-button'));
+    toggle3dBtn?.addEventListener('mouseleave', () => this.cursorEl_?.classList.remove('on-button'));
+
+    // LinkedIn button cursor
+    const linkedinBtn = document.querySelector('.static-landing .nav-item[href]');
+    linkedinBtn?.addEventListener('mouseenter', () => this.cursorEl_?.classList.add('on-button'));
+    linkedinBtn?.addEventListener('mouseleave', () => this.cursorEl_?.classList.remove('on-button'));
+  }
+
+  async Enable3DMode_() {
+    if (this.is3DMode_) return;
+    this.is3DMode_ = true;
+
+    // Show loading state
+    const toggle3dBtn = document.getElementById('toggle-3d-btn');
+    if (toggle3dBtn) {
+      toggle3dBtn.innerHTML = '<span class="toggle-3d-text">Loading...</span>';
+      toggle3dBtn.disabled = true;
     }
 
+    // Load shaders and fonts
+    await shaders.loadShaders();
+    if (document?.fonts?.ready) {
+      try { await document.fonts.ready; } catch (_) {}
+    }
+
+    // Clear static landing
+    const container = document.getElementById('container');
+    container.innerHTML = '';
+
+    // Hide static landing, show 3D elements
+    document.body.classList.add('mode-3d');
+
+    // Initialize 3D
     this.Initialize_();
+  }
+
+  AnimateCursor_() {
+    requestAnimationFrame(() => {
+      if (this.cursorEl_) {
+        const lerp = (a, b, t) => a + (b - a) * t;
+        const t = 0.15;
+        this.cursorPos_.x = lerp(this.cursorPos_.x, this.cursorTarget_.x, t);
+        this.cursorPos_.y = lerp(this.cursorPos_.y, this.cursorTarget_.y, t);
+        this.cursorEl_.style.transform = `translate(${this.cursorPos_.x}px, ${this.cursorPos_.y}px)`;
+      }
+
+      // Only run lightweight cursor loop in static mode
+      if (!this.is3DMode_) {
+        this.AnimateCursor_();
+      }
+    });
   }
 
   Initialize_() {
     this.entityManager_ = entity_manager.EntityManager.Init();
-
     this.OnGameStarted_();
   }
 
@@ -58,19 +192,6 @@ class QuickFPS1 {
     this.LoadControllers_();
 
     this.previousRAF_ = null;
-    // Create custom cursor element
-    this.cursorEl_ = document.createElement('div');
-    this.cursorEl_.className = 'custom-cursor';
-    document.body.appendChild(this.cursorEl_);
-
-    this.cursorPos_ = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    this.cursorTarget_ = { x: this.cursorPos_.x, y: this.cursorPos_.y };
-    this.cursorSmooth_ = 0.15; // lower is smoother
-
-    window.addEventListener('mousemove', (e) => {
-      this.cursorTarget_.x = e.clientX;
-      this.cursorTarget_.y = e.clientY;
-    }, false);
     this.RAF_();
 
     // Setup bottom shadow box button handlers
